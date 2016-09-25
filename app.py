@@ -12,8 +12,11 @@ def firstName():
     rowx = 6
     colx = 2
     for row in range(first_row, total_rows):
-        fname.append(sh.cell_value(rowx, colx))
-        rowx += 1
+        if not sh.cell_value(rowx, colx=4):
+            rowx += 1
+        else:
+            fname.append(sh.cell_value(rowx, colx))
+            rowx += 1
     print(fname)
 
 lname = []
@@ -21,8 +24,11 @@ def lastName():
     rowx = 6
     colx = 1
     for row in range(first_row, total_rows):
-        lname.append(sh.cell_value(rowx, colx))
-        rowx += 1
+        if not sh.cell_value(rowx, colx=4):
+            rowx += 1
+        else:
+            lname.append(sh.cell_value(rowx, colx))
+            rowx += 1
     print(lname)
 
 elist = []
@@ -30,8 +36,11 @@ def email():
     rowx = 6
     colx = 3
     for row in range(first_row, total_rows):
-        elist.append(sh.cell_value(rowx, colx))
-        rowx += 1
+        if not sh.cell_value(rowx, colx=4):
+            rowx += 1
+        else:
+            elist.append(sh.cell_value(rowx, colx))
+            rowx += 1
     print(elist)
 
 firstName()
