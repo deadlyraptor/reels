@@ -17,7 +17,8 @@ def firstName():
         else:
             fname.append(sh.cell_value(rowx, colx))
             rowx += 1
-    print(fname)
+    cap_names = [name.capitalize() for name in fname]
+    return cap_names
 
 lname = []
 def lastName():
@@ -29,7 +30,8 @@ def lastName():
         else:
             lname.append(sh.cell_value(rowx, colx))
             rowx += 1
-    print(lname)
+    cap_sur = [name.capitalize() for name in lname]
+    return cap_sur
 
 elist = []
 def email():
@@ -41,31 +43,31 @@ def email():
         else:
             elist.append(sh.cell_value(rowx, colx))
             rowx += 1
-    print(elist)
+    return elist
 
-firstName()
-lastName()
-email()
 
 book = xlwt.Workbook()
 sheet = book.add_sheet('Email Adds')
 
 
 def wfname():
+    first_names = firstName()
     column_number = 0
-    for row_number, item in enumerate(fname):
+    for row_number, item in enumerate(first_names):
         sheet.write(row_number, column_number, item)
 
 
 def wlname():
+    last_names = lastName()
     column_number = 1
-    for row_number, item in enumerate(lname):
+    for row_number, item in enumerate(last_names):
         sheet.write(row_number, column_number, item)
 
 
 def wemail():
+    emails = email()
     column_number = 2
-    for row_number, item in enumerate(elist):
+    for row_number, item in enumerate(emails):
         sheet.write(row_number, column_number, item)
 
 wfname()
