@@ -13,9 +13,17 @@ class Column():
         self.col = col
         self.caps = caps
 
-x = Column(2, True)  # first name
-y = Column(1, True)  # last name
-z = Column(3, False)  # email
+c = Column(2, True)  # first name
+b = Column(1, True)  # last name
+d = Column(3, False)  # email
+k = Column(10, False)  # Address 1
+l = Column(11, False)  # Address 2
+m = Column(12, True)  # City
+n = Column(13, False)  # State
+o = Column(14, False)  # Zip
+p = Column(15, False)  # Phone
+
+classes = [c, b, d, k, l, m, n, o, p]
 
 
 def copy(variable):
@@ -30,59 +38,18 @@ def copy(variable):
             rowx += 1
     if variable.caps:
         final_list = [name.capitalize() for name in temp_list]
-        print('The capitalized list printed.')
-        print(final_list)
+        # print('The capitalized list printed.')
+        # print(final_list)
         return final_list
     else:
-        print('The temp_list printed.')
-        print(temp_list)
+        # print('The temp_list printed.')
+        # print(temp_list)
         return temp_list
 
-# copy(x)
-# copy(y)
-# copy(z)
-"""
-def firstName():
-    rowx = 6
-    colx = 2
-    fname = []
-    for row in range(first_row, total_rows):
-        if not sh.cell_value(rowx, colx=4):
-            rowx += 1
-        else:
-            fname.append(sh.cell_value(rowx, colx))
-            rowx += 1
-    cap_names = [name.capitalize() for name in fname]
-    return cap_names
+for item in classes:
+    copy(item)
 
 
-def lastName():
-    lname = []
-    rowx = 6
-    colx = 1
-    for row in range(first_row, total_rows):
-        if not sh.cell_value(rowx, colx=4):
-            rowx += 1
-        else:
-            lname.append(sh.cell_value(rowx, colx))
-            rowx += 1
-    cap_sur = [name.capitalize() for name in lname]
-    return cap_sur
-
-
-def email():
-    elist = []
-    rowx = 6
-    colx = 3
-    for row in range(first_row, total_rows):
-        if not sh.cell_value(rowx, colx=4):
-            rowx += 1
-        else:
-            elist.append(sh.cell_value(rowx, colx))
-            rowx += 1
-    return elist
-"""
-"""
 book = xlwt.Workbook()
 sheet = book.add_sheet('Email Adds')
 
@@ -112,4 +79,3 @@ wlname()
 wemail()
 
 book.save('Email Adds.xls')
-"""
