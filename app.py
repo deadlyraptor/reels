@@ -9,10 +9,15 @@ first_row = 6
 
 
 class Column():
+    '''Instantiates a class whose attributes are the column number for the data
+    it contains and a boolean to check whether the first letter of the strings
+    in the list need to be capitalized.
+    '''
     def __init__(self, col, caps):  # col = column number, caps = True or False
         self.col = col
         self.caps = caps
 
+# The variable names for the class instances are the columns in the workbook.
 c = Column(2, True)  # first name
 b = Column(1, True)  # last name
 d = Column(3, False)  # email
@@ -38,44 +43,22 @@ def copy(variable):
             rowx += 1
     if variable.caps:
         final_list = [name.capitalize() for name in temp_list]
-        # print('The capitalized list printed.')
-        # print(final_list)
         return final_list
     else:
-        # print('The temp_list printed.')
-        # print(temp_list)
         return temp_list
-
-for item in classes:
-    copy(item)
-
 
 book = xlwt.Workbook()
 sheet = book.add_sheet('Email Adds')
 
 
-def wfname():
-    first_names = firstName()
+def paste():
     column_number = 0
-    for row_number, item in enumerate(first_names):
-        sheet.write(row_number, column_number, item)
+    for class_instance in classes:
+        list_to_write = copy(class_instance)
+        for row_number, item in enumerate(list_to_write):
+            sheet.write(row_number, column_number, item)
+        column_number += 1
 
-
-def wlname():
-    last_names = lastName()
-    column_number = 1
-    for row_number, item in enumerate(last_names):
-        sheet.write(row_number, column_number, item)
-
-
-def wemail():
-    emails = email()
-    column_number = 2
-    for row_number, item in enumerate(emails):
-        sheet.write(row_number, column_number, item)
-
-wfname()
-wlname()
-wemail()
+paste()
 
 book.save('Email Adds.xls')
