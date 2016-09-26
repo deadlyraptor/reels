@@ -46,8 +46,12 @@ def copy(variable):
         return name_list
     elif variable.col == 12:
         city_list = [city.title() for city in patron_values]
-        print(city_list)
         return city_list
+    elif variable.col == 15:
+        for index, phone in enumerate(patron_values):
+            if phone == 'No Primary Phone':
+                patron_values[index] = ''
+        return patron_values
     else:
         return patron_values
 
