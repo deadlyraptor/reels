@@ -23,7 +23,7 @@ b = Column(1, True)  # last name
 d = Column(3, False)  # email
 k = Column(10, False)  # Address 1
 l = Column(11, False)  # Address 2
-m = Column(12, True)  # City
+m = Column(12, False)  # City
 n = Column(13, False)  # State
 o = Column(14, False)  # Zip
 p = Column(15, False)  # Phone
@@ -34,18 +34,22 @@ classes = [c, b, d, k, l, m, n, o, p]
 def copy(variable):
     rowx = 6
     colx = variable.col
-    temp_list = []
+    patron_values = []
     for row in range(first_row, total_rows):
         if not sh.cell_value(rowx, colx=4):
             rowx += 1
         else:
-            temp_list.append(sh.cell_value(rowx, colx))
+            patron_values.append(sh.cell_value(rowx, colx))
             rowx += 1
     if variable.caps:
-        final_list = [name.capitalize() for name in temp_list]
-        return final_list
+        name_list = [name.capitalize() for name in patron_values]
+        return name_list
+    elif variable.col == 12:
+        city_list = [city.title() for city in patron_values]
+        print(city_list)
+        return city_list
     else:
-        return temp_list
+        return patron_values
 
 book = xlwt.Workbook()
 sheet = book.add_sheet('Email Adds')
