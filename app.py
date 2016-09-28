@@ -2,6 +2,7 @@ import os
 import xlrd
 import xlwt
 
+# Assumes directory with the workbooks is relative to script's location.
 directory = 'workbooks/'
 
 workbooks = []
@@ -9,53 +10,59 @@ for dirpath, dirnames, filenames in os.walk(directory):
     for files in filenames:
         workbooks.append(dirpath + files)
 
+# Sets up the workbook that will be written to.
 book = xlwt.Workbook()
 sheet = book.add_sheet('Email Adds')
-row_number = 0
 
-for thing in workbooks:
+column_headers = ['First Name', 'Last Name', 'Email', 'Address 1', 'Address 2',
+                  'City', 'State', 'Zip', 'Phone']
 
-    wb = xlrd.open_workbook(thing)
+column_number = 0
+for header in column_headers:
+    sheet.write(0, column_number, header)
+    column_number += 1
+
+row_number = 1
+
+for workbook in workbooks:
+
+    wb = xlrd.open_workbook(workbook)
     sh = wb.sheet_by_index(0)
     total_rows = sh.nrows
     first_row = 6
 
     class Column():
-        """Instantiates a class whose attributes are the column number for the data
-        it contains and a boolean to check whether the first letter of the str
-        ings
-        in the list need to be capitalized.
+        """A class used to store column number of each required column.
         """
-        def __init__(self, col, caps):
-            """
-            Args:
+        def __init__(self, col):
+            """Instantiates class with one attribute.
+
+            Attributes:
                 col: A column number from the workbook being read.
-                caps: Boolean used to run if statement that returns names in
-                    proper caps, e.g. NAME --> Name.
             """
             self.col = col
-            self.caps = caps
 
     # The variable names for the class instances are the columns in the
     # workbook.
-    c = Column(2, True)  # first name
-    b = Column(1, True)  # last name
-    d = Column(3, False)  # email
-    k = Column(10, False)  # Address 1
-    l = Column(11, False)  # Address 2
-    m = Column(12, False)  # City
-    n = Column(13, False)  # State
-    o = Column(14, False)  # Zip
-    p = Column(15, False)  # Phone
+    c = Column(2)  # first name
+    b = Column(1)  # last name
+    d = Column(3)  # email
+    k = Column(10)  # Address 1
+    l = Column(11)  # Address 2
+    m = Column(12)  # City
+    n = Column(13)  # State
+    o = Column(14)  # Zip
+    p = Column(15)  # Phone
 
     classes = [c, b, d, k, l, m, n, o, p]
 
     def copy(variable):
         """Return column from workbook as a list.
 
-        Args:
+        Arguments:
             variable: The class instance found in list classes.
-            Returns:
+
+        Returns:
             list: The values of all cells in the class's column.
             """
         rowx = 6
@@ -67,7 +74,7 @@ for thing in workbooks:
             else:
                 patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
-        if variable.caps:
+        if variable.col == 1 or variable.col == 2:
             name_list = [name.capitalize() for name in patron_values]
             return name_list
         elif variable.col == 12:

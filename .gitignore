@@ -92,6 +92,3 @@ ENV/
 # Workbooks
 workbooks/
 *.xls
-
-# Settings
-settings.py
