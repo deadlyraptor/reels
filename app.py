@@ -22,6 +22,9 @@ for header in column_headers:
     sheet.write(0, column_number, header)
     column_number += 1
 
+# The first row that will be written to. This variable increments each time the
+# main loop runs. The stored value is the row number where the second iteration
+# of the loop must starting writing to.
 row_number = 1
 
 for workbook in workbooks:
@@ -37,24 +40,23 @@ for workbook in workbooks:
         def __init__(self, col):
             """Instantiates class with one attribute.
 
-            Attributes:
+            Attribute:
                 col: A column number from the workbook being read.
             """
             self.col = col
 
-    # The variable names for the class instances are the columns in the
-    # workbook.
-    c = Column(2)  # first name
-    b = Column(1)  # last name
-    d = Column(3)  # email
-    k = Column(10)  # Address 1
-    l = Column(11)  # Address 2
-    m = Column(12)  # City
-    n = Column(13)  # State
-    o = Column(14)  # Zip
-    p = Column(15)  # Phone
+    first_name = Column(2)
+    last_name = Column(1)
+    email = Column(3)
+    address_one = Column(10)
+    address_two = Column(11)
+    city = Column(12)
+    state = Column(13)
+    zip_code = Column(14)
+    phone_number = Column(15)
 
-    classes = [c, b, d, k, l, m, n, o, p]
+    columns = [first_name, last_name, email, address_one, address_two, city,
+               state, zip_code, phone_number]
 
     def copy(variable):
         """Return column from workbook as a list.
@@ -92,8 +94,8 @@ for workbook in workbooks:
         """Write values of list returned by copy() to new workbook.
         """
         column_number = 0
-        for class_instance in classes:
-            list_to_write = copy(class_instance)
+        for column in columns:
+            list_to_write = copy(column)
             row_number_to_write = row_number
             for item in list_to_write:
                 sheet.write(row_number_to_write, column_number, item)
