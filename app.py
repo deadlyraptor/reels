@@ -11,15 +11,15 @@ for dirpath, dirnames, filenames in os.walk(directory):
         workbooks.append(dirpath + files)
 
 # Sets up the workbook that will be written to.
-book = xlwt.Workbook()
-sheet = book.add_sheet('Email Adds')
+general_book = xlwt.Workbook()
+general_sheet = general_book.add_sheet('Email Adds - General')
 
 column_headers = ['First Name', 'Last Name', 'Email', 'Address 1', 'Address 2',
                   'City', 'State', 'Zip', 'Phone']
 
 column_number = 0
 for header in column_headers:
-    sheet.write(0, column_number, header)
+    general_sheet.write(0, column_number, header)
     column_number += 1
 
 # The first row that will be written to. This variable increments each time the
@@ -77,7 +77,7 @@ for workbook in workbooks:
                 patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
         if variable.col == 1 or variable.col == 2:
-            name_list = [name.capitalize() for name in patron_values]
+            name_list = [name.title() for name in patron_values]
             return name_list
         elif variable.col == 12:
             city_list = [city.title() for city in patron_values]
@@ -98,7 +98,7 @@ for workbook in workbooks:
             list_to_write = copy(column)
             row_number_to_write = row_number
             for item in list_to_write:
-                sheet.write(row_number_to_write, column_number, item)
+                general_sheet.write(row_number_to_write, column_number, item)
                 row_number_to_write += 1
             column_number += 1
         global row_number
@@ -106,4 +106,4 @@ for workbook in workbooks:
 
     paste()
 
-book.save('Email Adds.xls')
+general_book.save('Email Adds - General.xls')
