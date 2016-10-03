@@ -26,8 +26,7 @@ for header in column_headers:
     after_hours_sheet.write(0, column_number, header)
     column_number += 1
 
-# after_hours_film = input('What is the After Hours film?: ')
-after_hours_film = 'Kill Bill: Volume 1'
+after_hours_film = input('What is the After Hours film?: ')
 
 # The first row that will be written to. This variable increments each time the
 # main loop runs. The stored value is the row number where the second iteration
@@ -68,6 +67,7 @@ for workbook in workbooks:
         colx = column
         patron_values = []
         for row in range(first_row, total_rows):
+            # If opt-in equals False or the row is from an After Hours purchase, skip it.
             if not sh.cell_value(rowx, colx=5) or sh.cell_value(rowx, colx=20) == after_hours_film:
                 rowx += 1
             else:
@@ -96,8 +96,10 @@ for workbook in workbooks:
         colx = column
         ah_patron_values = []
         for row in range(first_row, total_rows):
+            # If opt-in equals False or the row is not an After Hours purchase, skip it.
             if not sh.cell_value(rowx, colx=5) or not sh.cell_value(rowx, colx=20) == after_hours_film:
                 rowx += 1
+            # If opt-in equals True and the row is an After Hours purchase, add it to the list.
             elif sh.cell_value(rowx, colx=5) and sh.cell_value(rowx, colx=20) == after_hours_film:
                 ah_patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
@@ -122,10 +124,6 @@ for workbook in workbooks:
                 general_sheet.write(row_number_to_write, column_number, item)
                 row_number_to_write += 1
             column_number += 1
-
-    def pasteAH():
-        """Write values of list returned by copy() to new workbook.
-        """
         column_number = 0
         for column in columns:
             list_to_write = copyAH(column)
@@ -138,7 +136,6 @@ for workbook in workbooks:
         row_number = row_number_to_write
 
     paste()
-    pasteAH()
 
 general_book.save('Email Adds - General.xls')
 after_hours_book.save('Email Adds - After Hours.xls')
