@@ -34,41 +34,31 @@ for workbook in workbooks:
     total_rows = sh.nrows
     first_row = 6
 
-    class Column():
-        """A class used to store column number of each required column.
-        """
-        def __init__(self, col):
-            """Instantiates class with one attribute.
-
-            Attribute:
-                col: A column number from the workbook being read.
-            """
-            self.col = col
-
-    first_name = Column(2)
-    last_name = Column(1)
-    email = Column(3)
-    address_one = Column(11)
-    address_two = Column(12)
-    city = Column(13)
-    state = Column(14)
-    zip_code = Column(15)
-    phone_number = Column(16)
+    # The different columns in which customer data is found.
+    first_name = 2
+    last_name = 1
+    email = 3
+    address_one = 11
+    address_two = 12
+    city = 13
+    state = 14
+    zip_code = 15
+    phone_number = 16
 
     columns = [first_name, last_name, email, address_one, address_two, city,
                state, zip_code, phone_number]
 
-    def copy(variable):
+    def copy(column):
         """Return column from workbook as a list.
 
         Arguments:
-            variable: The class instance found in list classes.
+            variable: A column in columns.
 
         Returns:
             list: The values of all cells in the class's column.
             """
         rowx = 6
-        colx = variable.col
+        colx = column
         patron_values = []
         for row in range(first_row, total_rows):
             if not sh.cell_value(rowx, colx=5):
@@ -76,9 +66,9 @@ for workbook in workbooks:
             else:
                 patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
-        if variable.col in [1, 2, 13]:
+        if column in [1, 2, 13]:
             return [value.title() for value in patron_values]
-        elif variable.col == 16:
+        elif column == 16:
             for index, phone in enumerate(patron_values):
                 if phone == 'No Primary Phone':
                     patron_values[index] = ''
