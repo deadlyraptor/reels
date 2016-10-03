@@ -140,8 +140,6 @@ for workbook in workbooks:
                 general_sheet.write(row_number_to_write, column_number, item)
                 row_number_to_write += 1
             column_number += 1
-        global row_number
-        row_number = row_number_to_write
 
     def pasteAH():
         """Write values of list returned by copy() to new workbook.
