@@ -48,12 +48,12 @@ for workbook in workbooks:
     first_name = Column(2)
     last_name = Column(1)
     email = Column(3)
-    address_one = Column(10)
-    address_two = Column(11)
-    city = Column(12)
-    state = Column(13)
-    zip_code = Column(14)
-    phone_number = Column(15)
+    address_one = Column(11)
+    address_two = Column(12)
+    city = Column(13)
+    state = Column(14)
+    zip_code = Column(15)
+    phone_number = Column(16)
 
     columns = [first_name, last_name, email, address_one, address_two, city,
                state, zip_code, phone_number]
@@ -71,18 +71,14 @@ for workbook in workbooks:
         colx = variable.col
         patron_values = []
         for row in range(first_row, total_rows):
-            if not sh.cell_value(rowx, colx=4):
+            if not sh.cell_value(rowx, colx=5):
                 rowx += 1
             else:
                 patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
-        if variable.col == 1 or variable.col == 2:
-            name_list = [name.capitalize() for name in patron_values]
-            return name_list
-        elif variable.col == 12:
-            city_list = [city.title() for city in patron_values]
-            return city_list
-        elif variable.col == 15:
+        if variable.col in [1, 2, 13]:
+            return [value.title() for value in patron_values]
+        elif variable.col == 16:
             for index, phone in enumerate(patron_values):
                 if phone == 'No Primary Phone':
                     patron_values[index] = ''
