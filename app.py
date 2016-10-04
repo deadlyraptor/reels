@@ -26,7 +26,8 @@ for header in column_headers:
     after_hours_sheet.write(0, column_number, header)
     column_number += 1
 
-after_hours_film = input('What is the After Hours film?: ')
+#after_hours_film = input('What is the After Hours film?: ')
+after_hours_film = 'Kill Bill: Volume 1'
 
 # The first row that will be written to. This variable increments each time the
 # main loop runs. The stored value is the row number where the second iteration
@@ -66,69 +67,42 @@ for workbook in workbooks:
         rowx = 6
         colx = column
         patron_values = []
+        ah_patron_values = []
         for row in range(first_row, total_rows):
-            # If opt-in equals False or the row is from an After Hours purchase, skip it.
-            if not sh.cell_value(rowx, colx=5) or sh.cell_value(rowx, colx=20) == after_hours_film:
+            if not sh.cell_value(rowx, colx=5):
                 rowx += 1
-            else:
+            elif sh.cell_value(rowx, colx=5) and sh.cell_value(rowx, colx=20) == after_hours_film:
+                ah_patron_values.append(sh.cell_value(rowx, colx))
+                rowx += 1
+            elif sh.cell_value(rowx, colx=5) and not sh.cell_value(rowx, colx=20) == after_hours_film:
                 patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
         if column in [1, 2, 13]:
-            return [value.title() for value in patron_values]
+            return [value.title() for value in patron_values], [value.title() for value in ah_patron_values]
         elif column == 16:
             for index, phone in enumerate(patron_values):
                 if phone == 'No Primary Phone':
                     patron_values[index] = ''
-            return patron_values
-        else:
-            return patron_values
-
-    def copyAH(column):
-        """Return column from workbook as a list.
-
-        Arguments:
-            variable: The class instance found in list classes.
-
-        Returns:
-            list: The values of all cells in the class's column.
-            """
-        rowx = 6
-        colx = column
-        ah_patron_values = []
-        for row in range(first_row, total_rows):
-            # If opt-in equals False or the row is not an After Hours purchase, skip it.
-            if not sh.cell_value(rowx, colx=5) or not sh.cell_value(rowx, colx=20) == after_hours_film:
-                rowx += 1
-            # If opt-in equals True and the row is an After Hours purchase, add it to the list.
-            elif sh.cell_value(rowx, colx=5) and sh.cell_value(rowx, colx=20) == after_hours_film:
-                ah_patron_values.append(sh.cell_value(rowx, colx))
-                rowx += 1
-        if column in [1, 2, 13]:
-            return [name.title() for name in ah_patron_values]
-        elif column == 16:
             for index, phone in enumerate(ah_patron_values):
                 if phone == 'No Primary Phone':
                     ah_patron_values[index] = ''
-            return ah_patron_values
+            return patron_values, ah_patron_values
         else:
-            return ah_patron_values
+            return patron_values, ah_patron_values
+
 
     def paste():
         """Write values of list returned by copy() to new workbook.
         """
         column_number = 0
         for column in columns:
-            list_to_write = copy(column)
+            general_list_to_write, ah_list_to_write = copy(column)
             row_number_to_write = row_number
-            for item in list_to_write:
+            for item in general_list_to_write:
                 general_sheet.write(row_number_to_write, column_number, item)
                 row_number_to_write += 1
-            column_number += 1
-        column_number = 0
-        for column in columns:
-            list_to_write = copyAH(column)
             row_number_to_write = row_number
-            for item in list_to_write:
+            for item in ah_list_to_write:
                 after_hours_sheet.write(row_number_to_write, column_number, item)
                 row_number_to_write += 1
             column_number += 1
