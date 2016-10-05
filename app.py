@@ -26,9 +26,6 @@ for header in column_headers:
     after_hours_sheet.write(0, column_number, header)
     column_number += 1
 
-#after_hours_film = input('What is the After Hours film?: ')
-after_hours_film = 'Kill Bill: Volume 1'
-
 # The first row that will be written to. This variable increments each time the
 # main loop runs. The stored value is the row number where the second iteration
 # of the loop must starting writing to.
@@ -40,6 +37,8 @@ for workbook in workbooks:
     sh = wb.sheet_by_index(0)
     total_rows = sh.nrows
     first_row = 6
+    # after_hours_film = input('What is the After Hours film?: ')
+    after_hours_film = 'Kill Bill: Volume 1'
 
     # The different columns in which customer data is found.
     first_name = 2
@@ -69,18 +68,20 @@ for workbook in workbooks:
         patron_values = []
         ah_patron_values = []
         for row in range(first_row, total_rows):
+            opt_in = sh.cell_value(rowx, colx=5)
+            film_title = sh.cell_value(rowx, colx=20)
             # Checks if patron opted-in.
-            if not sh.cell_value(rowx, colx=5):
+            if not opt_in:
                 rowx += 1
             # Checks if patron opted-in and purchased tickets for the After Hours film.
-            elif sh.cell_value(rowx, colx=5) and sh.cell_value(rowx, colx=20) == after_hours_film:
+            elif opt_in and film_title == after_hours_film:
                 ah_patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
             # Checks if patron opted-in and purchased tickets for non-After Hours films.
-            elif sh.cell_value(rowx, colx=5) and not sh.cell_value(rowx, colx=20) == after_hours_film:
+            elif opt_in and not film_title == after_hours_film:
                 patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
-        # Formats first names, last names and cities in proper case, e.g. Coral gables --> Coral Gables
+        # Formats first names, last names and cities as title cased.
         if column in [1, 2, 13]:
             return [value.title() for value in patron_values], [value.title() for value in ah_patron_values]
         elif column == 16:
@@ -94,27 +95,23 @@ for workbook in workbooks:
         else:
             return patron_values, ah_patron_values
 
+    column_number = 0
 
-    def paste():
+    def paste(sheet_to_write, list_to_write):
         """Write values of lists returned by copy() to new workbooks.
         """
-        column_number = 0
+        row_number_to_write = row_number
+        for item in list_to_write:
+            sheet_to_write.write(row_number_to_write, column_number, item)
+            row_number_to_write += 1
+        # global row_number
+        # row_number = row_number_to_write
 
-        def write(sheet_to_write, list_to_write):
-            row_number_to_write = row_number
-            for item in list_to_write:
-                sheet_to_write.write(row_number_to_write, column_number, item)
-                row_number_to_write += 1
-
-        for column in columns:
-            general_list_to_write, ah_list_to_write = copy(column)
-            write(general_sheet, general_list_to_write)
-            write(after_hours_sheet, ah_list_to_write)
-            column_number += 1
-        #global row_number
-        #row_number = row_number_to_write
-
-    paste()
+    for column in columns:
+        general_list_to_write, ah_list_to_write = copy(column)
+        paste(general_sheet, general_list_to_write)
+        paste(after_hours_sheet, ah_list_to_write)
+        column_number += 1
 
 general_book.save('Email Adds - General.xls')
 after_hours_book.save('Email Adds - After Hours.xls')
