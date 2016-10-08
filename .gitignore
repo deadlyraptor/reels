@@ -92,3 +92,6 @@ ENV/
 # Workbooks
 workbooks/
 *.xls
+
+# Constant Contact API keys and tokens
+credentials.py
