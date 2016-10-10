@@ -95,3 +95,9 @@ workbooks/
 
 # Constant Contact API keys and tokens
 credentials.py
+
+# PyCharm
+.idea/
+
+# JSON dumps
+*.json
