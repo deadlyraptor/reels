@@ -37,7 +37,12 @@ for workbook in workbooks:
     sh = wb.sheet_by_index(0)
     total_rows = sh.nrows
     first_row = 6
-    after_hours_film = input('What is the After Hours film?: ')
+    films = []
+    weeks = int(input('How many weeks are in the workbook? '))
+    for week in range(0, weeks):
+        after_hours_film = input('What was the After Hours film for week {}? '.format(week + 1))
+        films.append(after_hours_film)
+
 
     # The different columns in which customer data is found.
     first_name = 2
@@ -73,11 +78,11 @@ for workbook in workbooks:
             if not opt_in:
                 rowx += 1
             # Checks if patron opted-in and purchased tickets for the After Hours film.
-            elif opt_in and film_title == after_hours_film:
+            elif opt_in and film_title in films:  # == after_hours_film:
                 ah_patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
             # Checks if patron opted-in and purchased tickets for non-After Hours films.
-            elif opt_in and film_title != after_hours_film:
+            elif opt_in and film_title not in films:  # != after_hours_film:
                 patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
         # Formats first names, last names and cities as title cased.
@@ -99,12 +104,10 @@ for workbook in workbooks:
     def paste(sheet_to_write, list_to_write):
         """Write values of lists returned by copy() to new workbooks.
         """
-        row_number_to_write = row_number
+        row_number_to_write = 1
         for item in list_to_write:
             sheet_to_write.write(row_number_to_write, column_number, item)
             row_number_to_write += 1
-        # global row_number
-        # row_number = row_number_to_write
 
     for column in columns:
         general_list_to_write, ah_list_to_write = copy(column)
