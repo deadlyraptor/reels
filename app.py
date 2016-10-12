@@ -37,8 +37,7 @@ for workbook in workbooks:
     sh = wb.sheet_by_index(0)
     total_rows = sh.nrows
     first_row = 6
-    # after_hours_film = input('What is the After Hours film?: ')
-    after_hours_film = 'Kill Bill: Volume 1'
+    after_hours_film = input('What is the After Hours film?: ')
 
     # The different columns in which customer data is found.
     first_name = 2
@@ -78,7 +77,7 @@ for workbook in workbooks:
                 ah_patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
             # Checks if patron opted-in and purchased tickets for non-After Hours films.
-            elif opt_in and not film_title == after_hours_film:
+            elif opt_in and film_title != after_hours_film:
                 patron_values.append(sh.cell_value(rowx, colx))
                 rowx += 1
         # Formats first names, last names and cities as title cased.
