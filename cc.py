@@ -3,40 +3,30 @@ import json
 import requests
 import xlrd
 from credentials import client_id, token, general_list_id, ah_list_id
-from credentials import test_list_id
 
-# Constant Contact API
+# Constant Contact API.
 base_url = 'https://api.constantcontact.com/v2/activities'
 endpoint = '/addcontacts?api_key='
 url = base_url + endpoint + client_id
 headers = {'Authorization': ('Bearer ' + token)}
 
-# Workbook locations.
+# Workbook location.
 directory = 'workbooks/'
 
 workbook = ''
 for dirpath, dirnames, filenames in os.walk(directory):
     for files in filenames:
         workbook = (dirpath + files)
-print(workbook)
-'''
-book = ''
-workbooks = os.listdir(directory)
-for item in workbooks:
-    book = item
 
-print(book)
-print(workbook)
-'''
 # Workbook setup.
 wb = xlrd.open_workbook(workbook)
 sh = wb.sheet_by_index(0)
 total_rows = sh.nrows
 first_row = 6
 
-# The lists customer info will be appended to.
-general_list = []
-after_hours_list = []
+# These lists will hold customer data in dictionaries.
+general_contacts = []
+after_hours_contacts = []
 
 after_hours_film = input('What is the After Hours film? ')
 
@@ -53,7 +43,11 @@ def append_dict_to_list(ls):
     contacts['email_addresses'] = [row_values[3]]
     contacts['first_name'] = row_values[2].title()
     contacts['last_name'] = row_values[1].title()
-    contacts['home_phone'] = row_values[16]
+
+    if row_values[16] == 'No Primary Phone':
+        contacts['home_phone'] = ''
+    else:
+        contacts['home_phone'] = row_values[16]
     contacts['addresses'] = [address]
 
     address['line1'] = row_values[11]
@@ -88,7 +82,7 @@ def create_payload(ls, list_id):
 
 
 def cc(function):
-    '''Uploads JSON payload with customer data to ConstantContact.
+    '''Uploads JSON payload with customer data to Constant Contact.
 
     Arguments:
         function = The function create_payload() that creates the
@@ -100,7 +94,8 @@ def cc(function):
     print(r.text)
     print('-------------')
 
-# Loops over a workbook and creates dictionaries out of customer data.
+# Loops over the workbook and appends the dictionaries created by calling
+# append_dict_to_list into the corresponding lists..
 for row in range(first_row, total_rows):
     contacts = {}
     address = {}
@@ -114,5 +109,5 @@ for row in range(first_row, total_rows):
     elif opt_in and film_title != after_hours_film:
         append_dict_to_list(general_list)
 
-# cc(create_payload(general_list, general_list_id))
-cc(create_payload(after_hours_list, test_list_id))
+cc(create_payload(general_list, general_list_id))
+cc(create_payload(after_hours_list, after_hours_list))
