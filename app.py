@@ -1,6 +1,9 @@
 import os
 import xlrd
 import xlwt
+import time
+
+t0 = time.time()
 
 # Assumes the directory with the workbook is relative to the script's location.
 directory = 'workbooks/'
@@ -103,8 +106,8 @@ def paste(sheet, list):
     """Write values of lists returned by copy() to new workbooks.
     """
     row = 1
-    for item in list:
-        sheet.write(row, column_number, item)
+    for data in list:
+        sheet.write(row, column_number, data)
         row += 1
 
 for column in columns:
@@ -115,3 +118,7 @@ for column in columns:
 
 general_book.save('Email Adds - General.xls')
 after_hours_book.save('Email Adds - After Hours.xls')
+
+t1 = time.time()
+total = t1 - t0
+print(total)
