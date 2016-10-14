@@ -2,13 +2,13 @@ import os
 import xlrd
 import xlwt
 
-# Assumes directory with the workbooks is relative to script's location.
+# Assumes directory with the workbook is relative to script's location.
 directory = 'workbooks/'
 
-workbooks = []
+workbook = ''
 for dirpath, dirnames, filenames in os.walk(directory):
     for files in filenames:
-        workbooks.append(dirpath + files)
+        workbook = (dirpath + files)
 
 # Sets up the general workbook that will be written to.
 general_book = xlwt.Workbook()
@@ -26,93 +26,89 @@ for header in column_headers:
     after_hours_sheet.write(0, column_number, header)
     column_number += 1
 
-# The first row that will be written to. This variable increments each time the
-# main loop runs. The stored value is the row number where the second iteration
-# of the loop must starting writing to.
-row_number = 1
 
-for workbook in workbooks:
+wb = xlrd.open_workbook(workbook)
+sh = wb.sheet_by_index(0)
+total_rows = sh.nrows
+first_row = 6
+films = []
+weeks = int(input('How many weeks are in the workbook? '))
+for week in range(0, weeks):
+    film = input('The After Hours film for week {} was: '.format(week + 1))
+    films.append(film)
 
-    wb = xlrd.open_workbook(workbook)
-    sh = wb.sheet_by_index(0)
-    total_rows = sh.nrows
-    first_row = 6
-    films = []
-    weeks = int(input('How many weeks are in the workbook? '))
-    for week in range(0, weeks):
-        film = input('The After Hours film for week {} was: '.format(week + 1))
-        films.append(film)
+# The different columns in which customer data is found.
+first_name = 2
+last_name = 1
+email = 3
+address_one = 11
+address_two = 12
+city = 13
+state = 14
+zip_code = 15
+phone_number = 16
 
-    # The different columns in which customer data is found.
-    first_name = 2
-    last_name = 1
-    email = 3
-    address_one = 11
-    address_two = 12
-    city = 13
-    state = 14
-    zip_code = 15
-    phone_number = 16
+columns = [first_name, last_name, email, address_one, address_two, city, state,
+           zip_code, phone_number]
 
-    columns = [first_name, last_name, email, address_one, address_two, city,
-               state, zip_code, phone_number]
 
-    def copy(column):
-        """Return column from workbook as a list.
+def copy(column):
+    """Return column from workbook as a list.
 
-        Arguments:
-            column: A column in columns.
+    Arguments:
+        column: A column in columns.
 
-        Returns:
-            tuple: The two lists containing the cell values in each column.
-            """
-        rowx = 6
-        colx = column
-        patron_values = []
-        ah_patron_values = []
-        for row in range(first_row, total_rows):
-            opt_in = sh.cell_value(rowx, colx=5)
-            film_title = sh.cell_value(rowx, colx=20)
-            # Checks if patron opted-in.
-            if not opt_in:
-                rowx += 1
-            # Checks if patron opted-in and purchased tickets for the After Hours film.
-            elif opt_in and film_title in films:  # == after_hours_film:
-                ah_patron_values.append(sh.cell_value(rowx, colx))
-                rowx += 1
-            # Checks if patron opted-in and purchased tickets for non-After Hours films.
-            elif opt_in and film_title not in films:  # != after_hours_film:
-                patron_values.append(sh.cell_value(rowx, colx))
-                rowx += 1
-        # Formats first names, last names and cities as title cased.
-        if column in [1, 2, 13]:
-            return [value.title() for value in patron_values], [value.title() for value in ah_patron_values]
-        elif column == 16:
-            for index, phone in enumerate(patron_values):
-                if phone == 'No Primary Phone':
-                    patron_values[index] = ''
-            for index, phone in enumerate(ah_patron_values):
-                if phone == 'No Primary Phone':
-                    ah_patron_values[index] = ''
-            return patron_values, ah_patron_values
-        else:
-            return patron_values, ah_patron_values
-
-    column_number = 0
-
-    def paste(sheet_to_write, list_to_write):
-        """Write values of lists returned by copy() to new workbooks.
+    Returns:
+        tuple: The two lists containing the cell values in each column.
         """
-        row_number_to_write = 1
-        for item in list_to_write:
-            sheet_to_write.write(row_number_to_write, column_number, item)
-            row_number_to_write += 1
+    rowx = 6
+    colx = column
+    patron_values = []
+    ah_patron_values = []
+    for row in range(first_row, total_rows):
+        opt_in = sh.cell_value(rowx, colx=5)
+        film_title = sh.cell_value(rowx, colx=20)
+        # Checks if patron opted-in.
+        if not opt_in:
+            rowx += 1
+        # Checks if patron opted-in and purchased tickets for the After Hours film.
+        elif opt_in and film_title in films:  # == after_hours_film:
+            ah_patron_values.append(sh.cell_value(rowx, colx))
+            rowx += 1
+        # Checks if patron opted-in and purchased tickets for non-After Hours films.
+        elif opt_in and film_title not in films:  # != after_hours_film:
+            patron_values.append(sh.cell_value(rowx, colx))
+            rowx += 1
+    # Formats first names, last names and cities as title cased.
+    if column in [1, 2, 13]:
+        return [value.title() for value in patron_values], [value.title() for value in ah_patron_values]
+    elif column == 16:
+        for index, phone in enumerate(patron_values):
+            if phone == 'No Primary Phone':
+                patron_values[index] = ''
+        for index, phone in enumerate(ah_patron_values):
+            if phone == 'No Primary Phone':
+                ah_patron_values[index] = ''
+        return patron_values, ah_patron_values
+    else:
+        return patron_values, ah_patron_values
 
-    for column in columns:
-        general_list_to_write, ah_list_to_write = copy(column)
-        paste(general_sheet, general_list_to_write)
-        paste(after_hours_sheet, ah_list_to_write)
-        column_number += 1
+column_number = 0
+
+
+def paste(sheet_to_write, list_to_write):
+    """Write values of lists returned by copy() to new workbooks.
+    """
+    row_number_to_write = 1
+    for item in list_to_write:
+        sheet_to_write.write(row_number_to_write, column_number, item)
+        row_number_to_write += 1
+
+for column in columns:
+    general_list_to_write, ah_list_to_write = copy(column)
+    paste(general_sheet, general_list_to_write)
+    paste(after_hours_sheet, ah_list_to_write)
+    column_number += 1
 
 general_book.save('Email Adds - General.xls')
 after_hours_book.save('Email Adds - After Hours.xls')

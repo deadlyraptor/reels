@@ -9,7 +9,7 @@ endpoint = '/addcontacts?api_key='
 url = base_url + endpoint + client_id
 headers = {'Authorization': ('Bearer ' + token)}
 
-# Workbook location.
+# Assumes directory with workbook is relative to script's location.
 directory = 'workbooks/'
 
 workbook = ''
