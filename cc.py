@@ -1,8 +1,7 @@
 import os
-import requests
 import xlrd
-from credentials import client_id, token, general_list_id, ah_list_id
-import json
+import requests
+from credentials import client_id, token, general_list_id, after_hours_list_id
 
 # Constant Contact API.
 base_url = 'https://api.constantcontact.com/v2/activities'
@@ -22,19 +21,18 @@ for dirpath, dirnames, filenames in os.walk(directory):
 wb = xlrd.open_workbook(workbook)
 sh = wb.sheet_by_index(0)
 total_rows = sh.nrows
-first_row = 6
+first_row = 6  # skips the first six rows as they are irrelevant.
 
 # These lists will hold customer data in dictionaries.
 general_contacts = []
 after_hours_contacts = []
 
-films = ['The Good, the Bad and the Ugly', 'Adaptation.', 'City of God',
-         'Do the Right Thing']
-# films = []
-# weeks = int(input('How many weeks are in the workbook? '))
-# for week in range(0, weeks):
-#    film = input('The After Hours film for week {} was: '.format(week + 1))
-#    films.append(film)
+# This creates a list with all of the After Hours films in the workbook.
+films = []
+weeks = int(input('How many weeks are in the workbook? '))
+for week in range(0, weeks):
+    film = input('The After Hours film for week {} was: '.format(week + 1))
+    films.append(film)
 
 
 def append_contacts(contacts):
@@ -93,14 +91,11 @@ def add_contacts(payload):
     Arguments:
         payload = The payload returned by create_payload().
     '''
-    # r = requests.post(url, headers=headers, json=payload)
-    # print(r.status_code)
-    # print(r.reason)
-    # print(r.text)
-    # print('-------------')
-    j = json.dumps(function)
-    with open('data.json', 'w') as f:
-        f.write(j)
+    r = requests.post(url, headers=headers, json=payload)
+    print(r.status_code)
+    print(r.reason)
+    print(r.text)
+    print('-------------')
 
 # Loops over the workbook and appends the dictionaries created by calling
 # append_contacts into the corresponding lists.
@@ -117,5 +112,5 @@ for row in range(first_row, total_rows):
     elif opt_in and film_title not in films:
         append_contacts(general_contacts)
 
-# add_contacts(create_payload(general_contacts, general_list_id))
-add_contacts(create_payload(after_hours_contacts, ah_list_id))
+add_contacts(create_payload(general_contacts, general_list_id))
+add_contacts(create_payload(after_hours_contacts, after_hours_list_id))
