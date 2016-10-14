@@ -40,9 +40,8 @@ for workbook in workbooks:
     films = []
     weeks = int(input('How many weeks are in the workbook? '))
     for week in range(0, weeks):
-        after_hours_film = input('What was the After Hours film for week {}? '.format(week + 1))
-        films.append(after_hours_film)
-
+        film = input('The After Hours film for week {} was: '.format(week + 1))
+        films.append(film)
 
     # The different columns in which customer data is found.
     first_name = 2

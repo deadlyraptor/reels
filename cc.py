@@ -1,5 +1,4 @@
 import os
-import json
 import requests
 import xlrd
 from credentials import client_id, token, general_list_id, ah_list_id
@@ -18,7 +17,7 @@ for dirpath, dirnames, filenames in os.walk(directory):
     for files in filenames:
         workbook = (dirpath + files)
 
-# Workbook setup.
+# Preps the workbook.
 wb = xlrd.open_workbook(workbook)
 sh = wb.sheet_by_index(0)
 total_rows = sh.nrows
@@ -28,7 +27,11 @@ first_row = 6
 general_contacts = []
 after_hours_contacts = []
 
-after_hours_film = input('What is the After Hours film? ')
+films = []
+weeks = int(input('How many weeks are in the workbook? '))
+for week in range(0, weeks):
+    film = input('The After Hours film for week {} was: '.format(week + 1))
+    films.append(film)
 
 
 def append_dict_to_list(ls):
@@ -88,14 +91,17 @@ def cc(function):
         function = The function create_payload() that creates the
         required payload.
     '''
-    r = requests.post(url, headers=headers, json=function)
-    print(r.status_code)
-    print(r.reason)
-    print(r.text)
-    print('-------------')
+    # r = requests.post(url, headers=headers, json=function)
+    # print(r.status_code)
+    # print(r.reason)
+    # print(r.text)
+    # print('-------------')
+    j = json.dumps(function)
+    with open('data.json', 'w') as f:
+        f.write(j)
 
 # Loops over the workbook and appends the dictionaries created by calling
-# append_dict_to_list into the corresponding lists..
+# append_dict_to_list into the corresponding lists.
 for row in range(first_row, total_rows):
     contacts = {}
     address = {}
@@ -104,10 +110,11 @@ for row in range(first_row, total_rows):
     film_title = row_values[20]
     if not opt_in:
         continue
-    elif opt_in and film_title == after_hours_film:
-        append_dict_to_list(after_hours_list)
-    elif opt_in and film_title != after_hours_film:
-        append_dict_to_list(general_list)
+    elif opt_in and film_title in films:
+        append_dict_to_list(after_hours_contacts)
+    elif opt_in and film_title not in films:
+        append_dict_to_list(general_contacts)
 
-cc(create_payload(general_list, general_list_id))
-cc(create_payload(after_hours_list, after_hours_list))
+
+# cc(create_payload(general_contacts, general_list_id))
+cc(create_payload(after_hours_contacts, ah_list_id))
