@@ -13,7 +13,7 @@ def gmail_auth():
     google = OAuth2Session(g_client_id, scope=scope, redirect_uri=redirect_uri)
 
     authorization_url, state = google.authorization_url(auth_uri,
-                                                        acess_type='offline',
+                                                        access_type='offline',
                                                         approval_prompts='force')
 
     print('Please go here and authorize: ', authorization_url)
@@ -31,5 +31,3 @@ def refresh():
     j = r.json()
     access_token = j['access_token']
     return(access_token)
-
-refresh()
