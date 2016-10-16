@@ -1,9 +1,6 @@
 import os
 import xlrd
 import xlwt
-import time
-
-t0 = time.time()
 
 # Assumes the directory with the workbook is relative to the script's location.
 directory = 'workbooks/'
@@ -118,7 +115,3 @@ for column in columns:
 
 general_book.save('Email Adds - General.xls')
 after_hours_book.save('Email Adds - After Hours.xls')
-
-t1 = time.time()
-total = t1 - t0
-print(total)
