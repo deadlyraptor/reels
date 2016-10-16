@@ -1,19 +1,33 @@
 import requests
-from credentials import label_id, access_token
+from credentials import label_id
+from gmailauth import refresh
 
+access_token = refresh()
 headers = {'Authorization': ('Bearer ' + access_token)}
 
-params = {'labelIds': label_id, 'q': 'newer_than:2d'}
 
-r = requests.get('https://www.googleapis.com/gmail/v1/users/me/messages',
-                 headers=headers, params=params)
+def list_messages(headers):
+        params = {'labelIds': label_id, 'q': 'newer_than:2d'}
+        r = requests.get('https://www.googleapis.com/gmail/v1/users/me/messages',
+                         headers=headers, params=params)
 
-print(r.status_code)
-print(r.reason)
-print(r.content)
+        j = r.json()
+        print(j)
+        messages = []
+        if 'messages' in j:
+            messages.extend(j['messages'])
+        return messages
 
-messages = []
-if 'messages' in r:
-    messages.extend(r['messages'])
+print(get_messages(headers))
 
-print(messages)
+message_id = '157c86f6b45c2040'
+
+
+def get_message(headers, identity):
+    params = {'id': identity, }
+    r = requests.get('https://www.googleapis.com/gmail/v1/users/me/messages',
+                     headers=headers, params=)
+
+
+{'messages': [{'threadId': 'hash1', 'id': 'hash2'}],
+'resultSizeEstimate': 1}
