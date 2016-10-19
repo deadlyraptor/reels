@@ -1,6 +1,6 @@
 import requests
 from base64 import urlsafe_b64decode
-from credentials import label_id, url1, url2, members_list_id, test_list_id
+from credentials import label_id, members_list_id, test_list_id
 from credentials import token, client_id
 from gmailauth import refresh
 import email
@@ -17,7 +17,7 @@ headers = {'Authorization': ('Bearer ' + access_token)}
 
 
 def list_messages(headers):
-        params = {'labelIds': label_id, 'q': 'newer_than:2d'}
+        params = {'labelIds': label_id, 'q': 'newer_than:3d'}
         r = requests.get('https://www.googleapis.com/gmail/v1/users/me/messages',
                          headers=headers, params=params)
 
@@ -45,31 +45,22 @@ def get_message(headers, identity):
 
 def get_contact(msg):
     msg_string = msg.get_payload()
-    ls = msg_string.split()
+    body = msg_string.split()
     delimiter = '='
 
-    first_name = ls[22]
-    delimiter_index = first_name.find(delimiter)
-    first_name = first_name[:delimiter_index]
+    elements = {'first_name': body[22], 'last_name': body[23],
+                'email_address': body[24], 'home_phone': body[25]}
 
-    last_name = ls[23]
-    delimiter_index = last_name.find(delimiter)
-    last_name = last_name[:delimiter_index]
-
-    email_address = ls[24]
-    delimiter_index = email_address.find(delimiter)
-    email_address = email_address[:delimiter_index]
-
-    home_phone = ls[25]
-    delimiter_index = home_phone.find(delimiter)
-    home_phone = home_phone[:delimiter_index]
+    for key in elements:
+        delimiter_index = elements[key].find(delimiter)
+        elements[key] = elements[key][:delimiter_index]
 
     members = []
     contact = {}
-    contact['email_addresses'] = [email_address]
-    contact['first_name'] = first_name.title()
-    contact['last_name'] = last_name.title()
-    contact['home_phone'] = home_phone
+    contact['email_addresses'] = [elements['email_address']]
+    contact['first_name'] = elements['first_name'].title()
+    contact['last_name'] = elements['last_name'].title()
+    contact['home_phone'] = elements['home_phone']
     members.append(contact)
     return members
 
@@ -98,4 +89,5 @@ def add_contacts(payload):
 for item in list_messages(headers):
     contacts = get_contact(get_message(headers, item))
     payload = create_payload(contacts, test_list_id)
-    add_contacts(payload)
+    # add_contacts(payload)
+    print(payload)
