@@ -1,15 +1,9 @@
 import requests
+import constantcontact as cc
 from email import message_from_string
 from base64 import urlsafe_b64decode
 from credentials import label_id, members_list_id
-from credentials import token, client_id
 from gmailauth import refresh
-
-# Constant Contact API.
-base_url = 'https://api.constantcontact.com/v2/activities'
-endpoint = '/addcontacts?api_key='
-url = base_url + endpoint + client_id
-cc_headers = {'Authorization': ('Bearer ' + token)}
 
 access_token = refresh()
 
@@ -64,31 +58,7 @@ def get_contact(msg):
     return members
 
 
-def create_payload(contacts, list_id):
-    payload = {'import_data': contacts,
-               'lists': [list_id],
-               'column_names': ['Email Address', 'First Name', 'Last Name',
-                                'Home Phone', 'Address Line 1',
-                                'Address Line 2', 'City', 'State',
-                                'Zip/Postal Code']}
-    return payload
-
-
-def add_contacts(payload):
-    '''POSTs a JSON payload to the Constant Contact API.
-
-    Arguments:
-        payload = The payload returned by create_payload().
-    '''
-    r = requests.post(url, headers=cc_headers, json=payload)
-    print(r.status_code)
-    print(r.reason)
-    print(r.text)
-    print('-------------')
-
-
 for item in list_messages(headers):
     contacts = get_contact(get_message(headers, item))
-    payload = create_payload(contacts, members_list_id)
-    add_contacts(payload)
-    # print(payload)
+    payload = cc.create_payload(contacts, members_list_id)
+    cc.add_contacts(payload)
