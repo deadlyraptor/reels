@@ -1,6 +1,8 @@
-# contact-copy
+# reels
 
-These Python scripts are used to upload customer data into a Constant Contact
+This suite of Python scripts are used to automate various tasks at the Coral Gables Art Cinema.
+
+upload customer data into a Constant Contact
 database by reading from an Excel workbook formatted as .xls.
 
 The customer data collected includes:
@@ -15,21 +17,29 @@ The customer data collected includes:
 8. Zip
 9. Phone number
 
-## app.py
+## cc_spreadsheet
 
-Copies the content from a single workbook and pastes it into two
-new workbooks. Two workbooks are created because customers are
-added to one of two lists, depending on what film they watched.
+Reads the customer contact information from a single workbook and writes it to
+one of two new workbooks, depending on which film the customer purchased tickets for.
 
-## cc.py
+*the spreadsheets must be in .xls format*
 
-Reads the content from a single workbook, extracts the required data, and stores
-it in a specially formatted JSON payload. A request POST request is then made
-that adds the contacts to the relevant list in Constant Contact API.
+## cc_upload
+
+Reads the customer contact information from a single workbook, stores it into one
+of two JSON payloads, and adds the contacts to one of two lists in Contact Contact via
+a POST request. The payload and list the contact is added to is dependent on the
+film for which he or she purchased tickets.
+
+*the spreadsheets must be in .xls format*
+
+## member
+
+Extracts the contact information for new members stored in the body of an email confirming new member activity and stores it in a JSON payload. This payload is uploaded to Constant Contact via a POST request.
 
 ### Required packages
 ```
+requests
 xlrd
 xlwt
-requests
 ```
