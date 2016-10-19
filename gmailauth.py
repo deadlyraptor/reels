@@ -1,10 +1,12 @@
 import os
 import requests
 from requests_oauthlib import OAuth2Session
+from credentials import g_client_id, g_client_secret, refresh_token
 
-from credentials import g_client_id, g_client_secret
-from credentials import auth_uri, token_uri, redirect_uri, scope
-from credentials import refresh_token
+auth_uri = 'https://accounts.google.com/o/oauth2/auth'
+token_uri = 'https://accounts.google.com/o/oauth2/token'
+redirect_uri = 'http://localhost'
+scope = ['https://www.googleapis.com/auth/gmail.readonly']
 
 
 def gmail_auth():

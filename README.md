@@ -40,6 +40,7 @@ Extracts the contact information for new members stored in the body of an email 
 ### Required packages
 ```
 requests
+requests_oauthlib
 xlrd
 xlwt
 ```
