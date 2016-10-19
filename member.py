@@ -1,9 +1,9 @@
 import requests
+from email import message_from_string
 from base64 import urlsafe_b64decode
-from credentials import label_id, members_list_id, test_list_id
+from credentials import label_id, members_list_id
 from credentials import token, client_id
 from gmailauth import refresh
-import email
 
 # Constant Contact API.
 base_url = 'https://api.constantcontact.com/v2/activities'
@@ -20,7 +20,6 @@ def list_messages(headers):
         params = {'labelIds': label_id, 'q': 'newer_than:3d'}
         r = requests.get('https://www.googleapis.com/gmail/v1/users/me/messages',
                          headers=headers, params=params)
-
         j = r.json()
         messages = []
         if 'messages' in j:
@@ -39,7 +38,7 @@ def get_message(headers, identity):
     raw = j['raw']
     byte = urlsafe_b64decode(raw)
     string = byte.decode()
-    msg = email.message_from_string(string)
+    msg = message_from_string(string)
     return msg
 
 
@@ -68,8 +67,10 @@ def get_contact(msg):
 def create_payload(contacts, list_id):
     payload = {'import_data': contacts,
                'lists': [list_id],
-               'column_names': ['Email Address', 'First Name',
-                                'Last Name', 'Home Phone']}
+               'column_names': ['Email Address', 'First Name', 'Last Name',
+                                'Home Phone', 'Address Line 1',
+                                'Address Line 2', 'City', 'State',
+                                'Zip/Postal Code']}
     return payload
 
 
@@ -88,6 +89,6 @@ def add_contacts(payload):
 
 for item in list_messages(headers):
     contacts = get_contact(get_message(headers, item))
-    payload = create_payload(contacts, test_list_id)
-    # add_contacts(payload)
-    print(payload)
+    payload = create_payload(contacts, members_list_id)
+    add_contacts(payload)
+    # print(payload)
