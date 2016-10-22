@@ -3,24 +3,23 @@ import xml.etree.ElementTree as ET
 import constantcontact as cc
 from credentials import app_key, user_key, corp_id, report_id, test_list_id
 
+# Agile URL is unwieldy and can only be built by joining all the strings.
 base_url = 'https://prod3.agileticketing.net/api/reporting.svc/xml/render'
-date = '&DatePicker=thisweek'
+date = '&DatePicker=yesterday'
 report = '&MembershipMultiPicker=130&filename=memberactivity.xml'
 
 url = '{}{}{}{}{}{}{}'.format(base_url, app_key, user_key, corp_id, report_id,
                               date, report)
-# r = requests.get(url)
-# text = r.text
-# xml = text[3:]
-# root = ET.fromstring(xml)
+r = requests.get(url)
+root = ET.fromstring(r.text[3:])
 
-tree = ET.parse('data.xml')
-root = tree.getroot()
-
+# The child elements that deal with actual member data.
 members = root[1]
 collection = members[3]
-summary = root[0].attrib
-record_count = int(summary['Record_Count'])
+
+# In order to loop over all the members, this variable points to the number of
+# members in the tree.
+record_count = int(root[0].attrib['Record_Count'])
 
 members = []
 
@@ -51,14 +50,13 @@ def append_members(collection):
 
     contact['custom_fields'] = [membership]
 
-    membership['name'] = 'Custom Field 1'
+    membership['name'] = 'Custom Field 4'
     membership['value'] = collection[26].text
 
     members.append(contact)
 
 for count in range(record_count):
     append_members(collection[count])
-
 
 payload = cc.create_payload(members, test_list_id)
 cc.add_contacts(payload)
