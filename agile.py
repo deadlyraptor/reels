@@ -1,6 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
-from credentials import app_key, user_key, corp_id, report_id
+import constantcontact as cc
+from credentials import app_key, user_key, corp_id, report_id, test_list_id
 
 base_url = 'https://prod3.agileticketing.net/api/reporting.svc/xml/render'
 date = '&DatePicker=thisweek'
@@ -24,7 +25,7 @@ record_count = int(summary['Record_Count'])
 members = []
 
 
-def append_contacts(collection):
+def append_members(collection):
     '''Populates the contact and address dictionaries and then appends them to
     a contacts list.
 
@@ -33,12 +34,12 @@ def append_contacts(collection):
     '''
     contact = {}
     address = {}
+    membership = {}
 
     contact['email_addresses'] = [collection[7].text]
     contact['first_name'] = collection[2].text.title()
     contact['last_name'] = collection[4].text.title()
     contact['home_phone'] = collection[19][0].attrib
-    contact['custom_field 1'] = collection[26].text
 
     contact['addresses'] = [address]
 
@@ -48,9 +49,16 @@ def append_contacts(collection):
     address['state_code'] = collection[12].text
     address['postal_code'] = collection[13].text
 
+    contact['custom_fields'] = [membership]
+
+    membership['name'] = 'Custom Field 1'
+    membership['value'] = collection[26].text
+
     members.append(contact)
 
 for count in range(record_count):
-    append_contacts(collection[count])
+    append_members(collection[count])
 
-print(members)
+
+payload = cc.create_payload(members, test_list_id)
+cc.add_contacts(payload)
