@@ -56,7 +56,8 @@ def append_members(collection):
     members.append(contact)
 
 for count in range(record_count):
-    append_members(collection[count])
+    if collection[count][7].text:
+        append_members(collection[count])
 
 payload = cc.create_payload(members, test_list_id)
 cc.add_contacts(payload)
