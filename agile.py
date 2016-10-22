@@ -26,11 +26,11 @@ members = []
 
 
 def append_members(collection):
-    '''Populates the contact and address dictionaries and then appends them to
-    a contacts list.
+    '''Populates the contact, address, and custom fields dictionaries and then
+    appends them to the members list.
 
     Arguments:
-        contacts = The list the dictionary will be appended to.
+        collection = The element in the XML tree that contains member info.
     '''
     contact = {}
     address = {}
@@ -39,7 +39,7 @@ def append_members(collection):
     contact['email_addresses'] = [collection[7].text]
     contact['first_name'] = collection[2].text.title()
     contact['last_name'] = collection[4].text.title()
-    contact['home_phone'] = collection[19][0].attrib
+    contact['home_phone'] = collection[19][0].attrib['Number']
 
     contact['addresses'] = [address]
 
