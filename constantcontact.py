@@ -36,6 +36,9 @@ def add_contacts(payload):
 
     Arguments:
         payload = The payload returned by create_payload().
+
+    Returns:
+        activity = The response's content in JSON format.
     '''
     r = requests.post(base_url + endpoints[0], headers=headers, params=params,
                       json=payload)
@@ -48,7 +51,11 @@ def poll_activity(activity):
 
     Arguments:
         activity = The text of the response to the add_contacts() call.
+
+    Returns:
+        status_report = A detailed status report for the activity in JSON
+        format.
     '''
     r = requests.get(base_url + activity['id'], headers=headers, params=params)
-    text = r.text
-    print(text)
+    status_report = r.json()
+    return status_report
