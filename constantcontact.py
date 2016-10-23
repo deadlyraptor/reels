@@ -27,7 +27,7 @@ def create_payload(contacts, list_id):
                                 'Last Name', 'Home Phone',
                                 'Address Line 1', 'Address Line 2',
                                 'City', 'State',
-                                'Zip/Postal Code']}
+                                'Zip/Postal Code', 'Custom Field 4']}
     return payload
 
 
