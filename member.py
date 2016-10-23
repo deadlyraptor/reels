@@ -50,7 +50,7 @@ def append_members(collection):
 
     contact['custom_fields'] = [membership]
 
-    membership['name'] = 'Custom Field 4'
+    membership['name'] = 'Membership Level'
     membership['value'] = collection[26].text
 
     members.append(contact)
