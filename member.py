@@ -2,7 +2,7 @@ import sys
 import requests
 import xml.etree.ElementTree as ET
 import constantcontact as cc
-from credentials import app_key, user_key, corp_id, report_id, test_list_id
+from credentials import app_key, user_key, corp_id, report_id, members_list_id
 
 # Agile URL is unwieldy and can only be built by joining all the strings.
 base_url = 'https://prod3.agileticketing.net/api/reporting.svc/xml/render'
@@ -61,5 +61,5 @@ for count in range(record_count):
     if collection[count][7].text:
         append_members(collection[count])
 
-payload = cc.create_payload(members, test_list_id)
+payload = cc.create_payload(members, members_list_id)
 cc.add_contacts(payload)
