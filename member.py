@@ -1,64 +1,63 @@
 import requests
+import xml.etree.ElementTree as ET
 import constantcontact as cc
-from email import message_from_string
-from base64 import urlsafe_b64decode
-from credentials import label_id, members_list_id
-from gmailauth import refresh
+from credentials import app_key, user_key, corp_id, report_id, test_list_id
 
-access_token = refresh()
+# Agile URL is unwieldy and can only be built by joining all the strings.
+base_url = 'https://prod3.agileticketing.net/api/reporting.svc/xml/render'
+date = '&DatePicker=yesterday'
+report = '&MembershipMultiPicker=130&filename=memberactivity.xml'
 
-headers = {'Authorization': ('Bearer ' + access_token)}
+url = '{}{}{}{}{}{}{}'.format(base_url, app_key, user_key, corp_id, report_id,
+                              date, report)
+r = requests.get(url)
+root = ET.fromstring(r.text[3:])
 
+# The child elements that deal with actual member data.
+members = root[1]
+collection = members[3]
 
-def list_messages(headers):
-        params = {'labelIds': label_id, 'q': 'newer_than:3d'}
-        r = requests.get('https://www.googleapis.com/gmail/v1/users/me/messages',
-                         headers=headers, params=params)
-        j = r.json()
-        messages = []
-        if 'messages' in j:
-            messages.extend(j['messages'])
-        message_ids = []
-        for item in messages:
-            message_ids.append(item['id'])
-        return message_ids
+# In order to loop over all the members, this variable points to the number of
+# members in the tree.
+record_count = int(root[0].attrib['Record_Count'])
 
-
-def get_message(headers, identity):
-    params = {'id': identity, 'format': 'raw'}
-    r = requests.get('https://www.googleapis.com/gmail/v1/users/me/messages/id',
-                     headers=headers, params=params)
-    j = r.json()
-    raw = j['raw']
-    byte = urlsafe_b64decode(raw)
-    string = byte.decode()
-    msg = message_from_string(string)
-    return msg
+members = []
 
 
-def get_contact(msg):
-    msg_string = msg.get_payload()
-    body = msg_string.split()
-    delimiter = '='
+def append_members(collection):
+    '''Populates the contact, address, and custom fields dictionaries and then
+    appends them to the members list.
 
-    elements = {'first_name': body[22], 'last_name': body[23],
-                'email_address': body[24], 'home_phone': body[25]}
-
-    for key in elements:
-        delimiter_index = elements[key].find(delimiter)
-        elements[key] = elements[key][:delimiter_index]
-
-    members = []
+    Arguments:
+        collection = The element in the XML tree that contains member info.
+    '''
     contact = {}
-    contact['email_addresses'] = [elements['email_address']]
-    contact['first_name'] = elements['first_name'].title()
-    contact['last_name'] = elements['last_name'].title()
-    contact['home_phone'] = elements['home_phone']
+    address = {}
+    membership = {}
+
+    contact['email_addresses'] = [collection[7].text]
+    contact['first_name'] = collection[2].text.title()
+    contact['last_name'] = collection[4].text.title()
+    contact['home_phone'] = collection[19][0].attrib['Number']
+
+    contact['addresses'] = [address]
+
+    address['line1'] = collection[9].text
+    address['line2'] = collection[10].text
+    address['city'] = collection[11].text.title()
+    address['state_code'] = collection[12].text
+    address['postal_code'] = collection[13].text
+
+    contact['custom_fields'] = [membership]
+
+    membership['name'] = 'Custom Field 4'
+    membership['value'] = collection[26].text
+
     members.append(contact)
-    return members
 
+for count in range(record_count):
+    if collection[count][7].text:
+        append_members(collection[count])
 
-for item in list_messages(headers):
-    contacts = get_contact(get_message(headers, item))
-    payload = cc.create_payload(contacts, members_list_id)
-    cc.add_contacts(payload)
+payload = cc.create_payload(members, test_list_id)
+cc.add_contacts(payload)
