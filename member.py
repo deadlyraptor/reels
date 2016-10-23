@@ -1,3 +1,4 @@
+import sys
 import requests
 import xml.etree.ElementTree as ET
 import constantcontact as cc
@@ -13,14 +14,15 @@ url = '{}{}{}{}{}{}{}'.format(base_url, app_key, user_key, corp_id, report_id,
 r = requests.get(url)
 root = ET.fromstring(r.text[3:])
 
-# The child elements that deal with actual member data.
-members = root[1]
-collection = members[3]
-
 # In order to loop over all the members, this variable points to the number of
 # members in the tree.
 record_count = int(root[0].attrib['Record_Count'])
 
+if record_count == 0:
+    sys.exit()
+
+# The child elements that deal with actual member data.
+collection = root[1][3]
 members = []
 
 
