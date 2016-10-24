@@ -2,6 +2,7 @@ import sys
 import requests
 import xml.etree.ElementTree as ET
 import constantcontact as cc
+from time import sleep
 from credentials import app_key, user_key, corp_id, report_id, test_list_id
 
 # Agile URL is unwieldy and can only be built by joining all the strings.
@@ -11,8 +12,11 @@ report = '&MembershipMultiPicker=130&filename=memberactivity.xml'
 
 url = '{}{}{}{}{}{}{}'.format(base_url, app_key, user_key, corp_id, report_id,
                               date, report)
-r = requests.get(url)
-root = ET.fromstring(r.text[3:])
+# r = requests.get(url)
+# root = ET.fromstring(r.text[3:])
+
+tree = ET.parse('test.xml')
+root = tree.getroot()
 
 # In order to loop over all the members, this variable points to the number of
 # members in the tree.
@@ -62,4 +66,15 @@ for count in range(record_count):
         append_members(collection[count])
 
 payload = cc.create_payload(members, test_list_id)
-cc.add_contacts(payload)
+activity = cc.add_contacts(payload)
+status_report = cc.poll_activity(activity)
+
+status = ['COMPLETE', 'ERROR']
+while status_report['status'] not in status:
+    print('The while loop status is: {}'.format(status_report['status']))
+    print('Polling...')
+    status_report = cc.poll_activity(activity)
+    sleep(5)
+else:
+    print('Finished!')
+    print('The finished status is: {}'.format(status_report['status']))
