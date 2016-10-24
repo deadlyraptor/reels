@@ -2,10 +2,10 @@ import requests
 from credentials import cc_client_id, cc_token
 
 # Constant Contact API.
-base_url = 'https://api.constantcontact.com/v2/activities'
-endpoint = '/addcontacts?api_key='
-url = base_url + endpoint + cc_client_id
+base_url = 'https://api.constantcontact.com/v2/activities/'
 headers = {'Authorization': ('Bearer ' + cc_token)}
+params = {'api_key': cc_client_id}
+endpoints = ['addcontacts']
 
 
 def create_payload(contacts, list_id):
@@ -36,9 +36,26 @@ def add_contacts(payload):
 
     Arguments:
         payload = The payload returned by create_payload().
+
+    Returns:
+        activity = The response's content in JSON format.
     '''
-    r = requests.post(url, headers=headers, json=payload)
-    print(r.status_code)
-    print(r.reason)
-    print(r.text)
-    print('-------------')
+    r = requests.post(base_url + endpoints[0], headers=headers, params=params,
+                      json=payload)
+    activity = r.json()
+    return activity
+
+
+def poll_activity(activity):
+    '''Returns a detailed status report for an activity in Constant Contact.
+
+    Arguments:
+        activity = The text of the response to the add_contacts() call.
+
+    Returns:
+        status_report = A detailed status report for the activity in JSON
+        format.
+    '''
+    r = requests.get(base_url + activity['id'], headers=headers, params=params)
+    status_report = r.json()
+    return status_report
