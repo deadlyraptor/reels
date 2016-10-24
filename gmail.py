@@ -2,11 +2,12 @@ import os
 import requests
 from requests_oauthlib import OAuth2Session
 from credentials import g_client_id, g_client_secret, refresh_token
+from email.mime.text import MIMEText
 
 auth_uri = 'https://accounts.google.com/o/oauth2/auth'
 token_uri = 'https://accounts.google.com/o/oauth2/token'
 redirect_uri = 'http://localhost'
-scope = ['https://www.googleapis.com/auth/gmail.readonly']
+scope = ['https://www.googleapis.com/auth/gmail.compose']
 
 
 def gmail_auth():
@@ -30,6 +31,23 @@ def refresh():
     fields = {'grant_type': 'refresh_token', 'client_id': g_client_id,
               'client_secret': g_client_secret, 'refresh_token': refresh_token}
     r = requests.post(token_uri, data=fields)
-    j = r.json()
-    access_token = j['access_token']
-    return(access_token)
+    token = r.json()
+    access_token = token['access_token']
+    return access_token
+
+
+def create_message(sender, to, subject, message_text):
+    message = MIMEText(message_text)
+    message['to'] = to
+    message['from'] = sender
+    message['subject'] = subject
+    send_message(message.as_string().encode())
+
+
+def send_message(message):
+    url = 'https://www.googleapis.com/upload/gmail/v1/users/me/messages/send'
+    headers = {'Authorization': ('Bearer ' + refresh()),
+               'Content-Type': 'message/rfc822'}
+    params = {'uploadType': 'media'}
+
+    r = requests.post(url, headers=headers, params=params, data=msg)
