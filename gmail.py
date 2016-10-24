@@ -50,4 +50,4 @@ def send_message(message):
                'Content-Type': 'message/rfc822'}
     params = {'uploadType': 'media'}
 
-    r = requests.post(url, headers=headers, params=params, data=msg)
+    r = requests.post(url, headers=headers, params=params, data=message)

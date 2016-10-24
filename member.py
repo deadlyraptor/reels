@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import constantcontact as cc
 from time import sleep
 from credentials import app_key, user_key, corp_id, report_id, test_list_id
+from gmail import create_message
 
 # Agile URL is unwieldy and can only be built by joining all the strings.
 base_url = 'https://prod3.agileticketing.net/api/reporting.svc/xml/render'
@@ -69,12 +70,15 @@ payload = cc.create_payload(members, test_list_id)
 activity = cc.add_contacts(payload)
 status_report = cc.poll_activity(activity)
 
-status = ['COMPLETE', 'ERROR']
-while status_report['status'] not in status:
-    print('The while loop status is: {}'.format(status_report['status']))
-    print('Polling...')
+while status_report['status'] != 'COMPLETE':
     status_report = cc.poll_activity(activity)
     sleep(5)
 else:
-    print('Finished!')
-    print('The finished status is: {}'.format(status_report['status']))
+    if status_report['error_count'] == 0:
+        create_message('info@gablescinema.com', 'info@gablescinema.com',
+                       'Members added to Constant Contact with no errors.',
+                       'Members added: {}'.format(status_report['contact_count']))
+    else:
+        create_message('info@gablescinema.com', 'info@gablescinema.com',
+                       'Members added to Constant Contact with {} errors.'.format(status_report['error_count']),
+                       'Members added: {}. \n The errors were: {}'.format(status_report['contact_count'], status_report['errors']))
