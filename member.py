@@ -6,14 +6,14 @@ from credentials import app_key, user_key, corp_id, report_id, members_list_id
 from time import sleep
 from gmail import create_message
 
-# Agile URL is unwieldy and can only be built by joining all the strings.
+# Agile API parameters.
 base_url = 'https://prod3.agileticketing.net/api/reporting.svc/xml/render'
-date = '&DatePicker=yesterday'
-report = '&MembershipMultiPicker=130&filename=memberactivity.xml'
 
-url = '{}{}{}{}{}{}{}'.format(base_url, app_key, user_key, corp_id, report_id,
-                              date, report)
-r = requests.get(url)
+params = {'appkey': app_key, 'userkey': user_key, 'corporgid': corp_id,
+          'reportid': report_id, 'DatePicker': 'yesterday',
+          'MembershipMultiPicker': '130', 'filename': 'memberactivity.xml'}
+
+r = requests.get(base_url, params)
 root = ET.fromstring(r.text[3:])
 
 # In order to loop over all the members, this variable points to the number of
