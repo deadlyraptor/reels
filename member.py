@@ -2,7 +2,8 @@ import sys
 import requests
 import xml.etree.ElementTree as ET
 import constantcontact as cc
-from credentials import app_key, user_key, corp_id, report_id, members_list_id
+from credentials import app_key, user_key, corp_id, report_id
+from credentials import general_list_id, members_list_id
 from time import sleep
 from gmail import create_message
 
@@ -68,7 +69,7 @@ for count in range(record_count):
     if collection[count][7].text:
         append_members(collection[count])
 
-payload = cc.create_payload(members, members_list_id)
+payload = cc.create_payload(members, [general_list_id, members_list_id])
 activity = cc.add_contacts(payload)
 status_report = cc.poll_activity(activity)
 
@@ -78,16 +79,16 @@ while status_report['status'] != 'COMPLETE':
 else:
     if status_report['error_count'] == 0:
         create_message('info@gablescinema.com', 'info@gablescinema.com',
-                       'New Constant Contact Activity: {} members added with \
+                       'New Constant Contact Activity: {} member(s) added with \
                        no errors.'.format(status_report['contact_count']),
-                       ('There were 0 members added.\n\n'.format(status_report['contact_count']),
+                       ('Added {} member(s) added.\n\n'
                         '---\n'
-                        'Sent by reels. Something wrong? Call Javier.'))
+                        'Sent by reels. Something wrong? Contact Javier.'.format(status_report['contact_count'])))
     else:
         create_message('info@gablescinema.com', 'info@gablescinema.com',
-                       'New Constant Contact Activity: {} members added with \
-                       {} errors.'.format(status_report['contact_count'],
-                                          status_report['error_count']),
-                       ('The errors were: 0'.format(status_report['errors']),
+                       'New Constant Contact Activity: {} member(s) added with \
+                       {} error(s).'.format(status_report['contact_count'],
+                                            status_report['error_count']),
+                       ('The error(s) were: {}.\n\n'
                         '---\n'
-                        'Sent by reels. Something wrong? Contact Javier.'))
+                        'Sent by reels. Something wrong? Contact Javier.'.format(status_report['errors'])))

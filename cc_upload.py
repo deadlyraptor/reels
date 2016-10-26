@@ -72,9 +72,10 @@ for row in range(first_row, total_rows):
         append_contacts(general_contacts)
 
 # General list.
-general_payload = cc.create_payload(general_contacts, general_list_id)
+general_payload = cc.create_payload(general_contacts, [general_list_id])
 cc.add_contacts(general_payload)
 
 # After Hours list.
-after_hours_payload = cc.create_payload(after_hours_contacts, after_hours_list_id)
+after_hours_payload = cc.create_payload(after_hours_contacts,
+                                        [after_hours_list_id])
 cc.add_contacts(after_hours_payload)
