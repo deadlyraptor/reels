@@ -22,7 +22,7 @@ def create_payload(contacts, list_id):
         names of the contacts's data.
     '''
     payload = {'import_data': contacts,
-               'lists': [list_id],
+               'lists': list_id,
                'column_names': ['Email Address', 'First Name',
                                 'Last Name', 'Home Phone',
                                 'Address Line 1', 'Address Line 2',
