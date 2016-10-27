@@ -2,10 +2,10 @@ import sys
 import requests
 import xml.etree.ElementTree as ET
 import constantcontact as cc
+import gmail
 from credentials import app_key, user_key, corp_id, report_id
 from credentials import general_list_id, members_list_id
 from time import sleep
-from gmail import create_message
 
 # Agile API parameters.
 base_url = 'https://prod3.agileticketing.net/api/reporting.svc/xml/render'
@@ -22,11 +22,12 @@ root = ET.fromstring(r.text[3:])
 record_count = int(root[0].attrib['Record_Count'])
 
 if record_count == 0:
-    create_message('info@gablescinema.com', 'info@gablescinema.com',
-                   'New Constant Contact Actvitiy: No new members to add.',
-                   ('There were no membership sales yesterday.\n\n'
-                    '---\n'
-                    'Sent by reels. Something wrong? Contact Javier.'))
+    gmail.create_message(email, email,
+                         'New Constant Contact Actvitiy: No new contacts to \
+                          add.',
+                         ('There were no membership sales yesterday.\n\n'
+                          '---\n'
+                          'Sent by reels. Something wrong? Contact Javier.'))
     sys.exit()
 
 # The child elements that deal with actual member data.
@@ -71,24 +72,5 @@ for count in range(record_count):
 
 payload = cc.create_payload(members, [general_list_id, members_list_id])
 activity = cc.add_contacts(payload)
-status_report = cc.poll_activity(activity)
-
-while status_report['status'] != 'COMPLETE':
-    status_report = cc.poll_activity(activity)
-    sleep(5)
-else:
-    if status_report['error_count'] == 0:
-        create_message('info@gablescinema.com', 'info@gablescinema.com',
-                       'New Constant Contact Activity: {} member(s) added with \
-                       no errors.'.format(status_report['contact_count']),
-                       ('Added {} member(s) added.\n\n'
-                        '---\n'
-                        'Sent by reels. Something wrong? Contact Javier.'.format(status_report['contact_count'])))
-    else:
-        create_message('info@gablescinema.com', 'info@gablescinema.com',
-                       'New Constant Contact Activity: {} member(s) added with \
-                       {} error(s).'.format(status_report['contact_count'],
-                                            status_report['error_count']),
-                       ('The error(s) were: {}.\n\n'
-                        '---\n'
-                        'Sent by reels. Something wrong? Contact Javier.'.format(status_report['errors'])))
+status_report = cc.get_status(activity)
+cc.poll_activity(status_report)

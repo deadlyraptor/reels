@@ -73,9 +73,13 @@ for row in range(first_row, total_rows):
 
 # General list.
 general_payload = cc.create_payload(general_contacts, [general_list_id])
-cc.add_contacts(general_payload)
+activity = cc.add_contacts(general_payload)
+status_report = cc.get_status(activity)
+cc.poll_activity(status_report)
 
 # After Hours list.
 after_hours_payload = cc.create_payload(after_hours_contacts,
                                         [after_hours_list_id])
-cc.add_contacts(after_hours_payload)
+activity = cc.add_contacts(after_hours_payload)
+status_report = cc.get_status(activity)
+cc.poll_activity(status_report)
