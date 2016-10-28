@@ -61,13 +61,13 @@ def append_members(collection):
 
     contact['custom_fields'] = [membership]
 
-    membership['name'] = 'Membership Level'
+    membership['name'] = 'Custom Field 1'
     membership['value'] = collection[26].text
 
     members.append(contact)
 
 for count in range(record_count):
-    if collection[count][7].text:
+    if collection[count][7].text and collection[count][7].text != collection[count - 1][7].text:
         append_members(collection[count])
 
 payload = cc.create_payload(members, [general_list_id, members_list_id])

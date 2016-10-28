@@ -40,8 +40,7 @@ def add_contacts(payload):
         payload = The dictionary returned by create_payload().
 
     Returns:
-        activity = A dictionary containing a detailed status report of the
-        activity.
+        activity = A dictionary with information on the activity just created.
     '''
     r = requests.post(base_url + endpoints[0], headers=headers, params=params,
                       json=payload)
@@ -61,7 +60,6 @@ def get_status(activity):
     '''
     r = requests.get(base_url + activity, headers=headers, params=params)
     report = r.json()
-    print(report)
     return report
 
 
