@@ -67,7 +67,10 @@ def append_members(collection):
     members.append(contact)
 
 for count in range(record_count):
-    if collection[count][7].text and collection[count][7].text != collection[count - 1][7].text:
+    # In order to add unique contacts and not overwrite ones already added,
+    # check that the entry has an email and it is not the same as the previous.
+    if (collection[count][7].text and
+        collection[count][7].text != collection[count - 1][7].text):
         append_members(collection[count])
 
 payload = cc.create_payload(members, [general_list_id, members_list_id])
