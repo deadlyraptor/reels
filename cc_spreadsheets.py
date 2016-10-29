@@ -27,7 +27,7 @@ for header in headers:
     after_hours_sheet.write(0, column_number, header)
     column_number += 1
 
-# Preps the workbook.
+# Preps the workbook that contains the information desired.
 wb = xlrd.open_workbook(workbook)
 sh = wb.sheet_by_index(0)
 total_rows = sh.nrows
@@ -42,10 +42,11 @@ for week in range(0, weeks):
 
 
 def read():
-    """Return column from workbook as a list.
+    """Collects the contact information for each entry in the original workbook.
 
     Returns:
-        tuple: The two lists containing the cell values in each column.
+        tuple: Contains two lists, one with the contacts who purchased tickets
+        to te After Hours film and the second with all others.
         """
     general_contacts = []
     after_hours_contacts = []
@@ -80,14 +81,17 @@ def read():
     return general_contacts, after_hours_contacts
 
 
-def write(sheet, lst):
-    """Write values of lists returned by copy() to new workbooks.
+def write(sheet, contacts):
+    """Write the contact information of each contact, stored in a list, to a
+    worksheet in a given workbook.
+
+    Arguments:
+        sheet = The sheet that will be written to in the workbook.
+        contacts = The list of contacts that will be written to the sheet.
     """
-    row = 1
-    for contact in lst:
+    for row, contact in enumerate(contacts, start=1):
         for col, data in enumerate(contact):
             sheet.write(row, col, data)
-        row += 1
 
 general_list, ah_list = read()
 write(general_sheet, general_list)
