@@ -18,7 +18,7 @@ general_sheet = general_book.add_sheet('Email Adds - General')
 after_hours_book = xlwt.Workbook()
 after_hours_sheet = after_hours_book.add_sheet('Email Adds - After Hours')
 
-headers = ['First Name', 'Last Name', 'Email', 'Address 1', 'Address 2',
+headers = ['Email', 'First Name', 'Last Name', 'Address 1', 'Address 2',
            'City', 'State', 'Zip', 'Phone']
 
 column_number = 0
@@ -27,7 +27,7 @@ for header in headers:
     after_hours_sheet.write(0, column_number, header)
     column_number += 1
 
-# Preps the workbook.
+# Preps the workbook that contains the information desired.
 wb = xlrd.open_workbook(workbook)
 sh = wb.sheet_by_index(0)
 total_rows = sh.nrows
@@ -40,78 +40,62 @@ for week in range(0, weeks):
     film = input('The After Hours film for week {} was: '.format(week + 1))
     films.append(film)
 
-# The different columns in which customer data is found.
-first_name = 2
-last_name = 1
-email = 3
-address_one = 11
-address_two = 12
-city = 13
-state = 14
-zip_code = 15
-phone_number = 16
 
-columns = [first_name, last_name, email, address_one, address_two, city, state,
-           zip_code, phone_number]
-
-
-def copy(column):
-    """Return column from workbook as a list.
-
-    Arguments:
-        column: A column in columns.
+def read():
+    """Collects the contact information for each entry in the original workbook.
 
     Returns:
-        tuple: The two lists containing the cell values in each column.
+        tuple: Contains two lists, one with the contacts who purchased tickets
+        to te After Hours film and the second with all others.
         """
-    rowx = 6
-    colx = column
-    general_values = []
-    after_hours_contact_values = []
+    general_contacts = []
+    after_hours_contacts = []
     for row in range(first_row, total_rows):
-        opt_in = sh.cell_value(rowx, colx=5)
-        film_title = sh.cell_value(rowx, colx=20)
+        general_contact = []
+        after_hours_contact = []
+        row_values = sh.row_values(row)
+        opt_in = row_values[5]
+        film_title = row_values[20]
         # Checks if patron opted-in.
         if not opt_in:
-            rowx += 1
-        # Checks if patron opted-in and purchased tickets for the After Hours film.
+            continue
+        # Checks if patron opted-in and purchased tickets for
+        # the After Hours film.
         elif opt_in and film_title in films:
-            after_hours_contact_values.append(sh.cell_value(rowx, colx))
-            rowx += 1
-        # Checks if patron opted-in and purchased tickets for non-After Hours films.
+            after_hours_contact = [row_values[3], row_values[2].title(),
+                                   row_values[1].title(), row_values[11],
+                                   row_values[12], row_values[13].title(),
+                                   row_values[14], row_values[15],
+                                   row_values[16].replace('No Primary Phone',
+                                                          '')]
+            after_hours_contacts.append(after_hours_contact)
+        # Checks if patron opted-in and purchased tickets for
+        # non-After Hours films.
         elif opt_in and film_title not in films:
-            general_values.append(sh.cell_value(rowx, colx))
-            rowx += 1
-    # Formats first names, last names and cities as title cased.
-    if column in [1, 2, 13]:
-        return [value.title() for value in general_values], [value.title() for value in after_hours_contact_values]
-    elif column == 16:
-        for index, phone in enumerate(general_values):
-            if phone == 'No Primary Phone':
-                general_values[index] = ''
-        for index, phone in enumerate(after_hours_contact_values):
-            if phone == 'No Primary Phone':
-                after_hours_contact_values[index] = ''
-        return general_values, after_hours_contact_values
-    else:
-        return general_values, after_hours_contact_values
-
-column_number = 0
+            general_contact = [row_values[3], row_values[2].title(),
+                               row_values[1].title(), row_values[11],
+                               row_values[12], row_values[13].title(),
+                               row_values[14], row_values[15],
+                               row_values[16].replace('No Primary Phone', '')]
+            general_contacts.append(general_contact)
+    return general_contacts, after_hours_contacts
 
 
-def paste(sheet, list):
-    """Write values of lists returned by copy() to new workbooks.
+def write(sheet, contacts):
+    """Write the contact information of each contact, stored in a list, to a
+    worksheet in a given workbook.
+
+    Arguments:
+        sheet = The sheet that will be written to in the workbook.
+        contacts = The list of contacts that will be written to the sheet.
     """
-    row = 1
-    for data in list:
-        sheet.write(row, column_number, data)
-        row += 1
+    for row, contact in enumerate(contacts, start=1):
+        for col, data in enumerate(contact):
+            sheet.write(row, col, data)
 
-for column in columns:
-    general_list_to_write, ah_list_to_write = copy(column)
-    paste(general_sheet, general_list_to_write)
-    paste(after_hours_sheet, ah_list_to_write)
-    column_number += 1
+general_list, ah_list = read()
+write(general_sheet, general_list)
+write(after_hours_sheet, ah_list)
 
 general_book.save('Email Adds - General.xls')
 after_hours_book.save('Email Adds - After Hours.xls')
