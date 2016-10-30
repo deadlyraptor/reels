@@ -15,6 +15,8 @@ It consists of the following:
 
 * **member** - Parses an XML file with sales information for memberships sold on a given date by making a request to the Agile reporting API and adding the contacts directly to Constant Contact via its API.
 
+* **photos** - Renames all of the photo files of extensions .jpg, .jpeg, and .png to a new name input by the user but appended with a number, e.g., file name 1, file name 2, etc.
+
 The customer data collected includes:
 
 1. First name
