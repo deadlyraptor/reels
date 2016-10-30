@@ -9,21 +9,27 @@ programs = ['1. Main Features', '2. After Hours', '3. Special Screenings',
 for program in programs:
     print(program)
 
+# These variables will make-up the full path, which takes the form:
+# M:/Coral Gables Art Cinema/Programming/PROGRAM/YEAR/TITLE/LOCATION OF PHOTOS
+root = 'M:/Coral Gables Art Cinema/Programming/'
 index = int(input('Select a program by its number: '))
 program = programs[index - 1][3:]
-
-
+year = str(date.today().year)
 title = input('Select a film: ')
 photo_dir = input('Location of the photos: ')
+
 new_name = input('Enter new base file name: ')
 
-root = 'M:/Coral Gables Art Cinema/Programming/'
-year = str(date.today().year)
-
+# The full path to the files, using the variables above.
 path = os.path.join(root, program, year, title, photo_dir)
 
-num_suffix = 1
-for photo in os.listdir(path):
-    final_name = '{} {}.jpg'.format(new_name, num_suffix)
+# Collect all the .jpg or .png files in the directory.
+photos = []
+for file in os.listdir(path):
+    if file[-4:] in ('.jpg', '.jpeg', '.png'):
+        photos.append(file)
+
+# Rename all of the photos collected above and keep the same file type.
+for number, photo in enumerate(photos, start=1):
+    final_name = '{} {}{}'.format(new_name, number, photo[-4:])
     os.rename(os.path.join(path, photo), os.path.join(path, final_name))
-    num_suffix += 1
