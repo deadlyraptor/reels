@@ -40,11 +40,7 @@ def append_contacts(contacts):
     contact['email_addresses'] = [row_values[3]]
     contact['first_name'] = row_values[2].title()
     contact['last_name'] = row_values[1].title()
-
-    if row_values[16] == 'No Primary Phone':
-        contact['home_phone'] = ''
-    else:
-        contact['home_phone'] = row_values[16]
+    contact['home_phone'] = row_values[16].replace('No Primary Phone', '')
 
     contact['addresses'] = [address]
 
