@@ -18,7 +18,6 @@ while True:
             print(program)
         index = int(input('Select a program by its number: '))
         program = programs[index - 1][3:]
-        print(program)
         break
     except ValueError:
         print('That didn\'t work! Type one of the numbers next to a program.')
