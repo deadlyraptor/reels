@@ -3,7 +3,7 @@ import requests
 import xml.etree.ElementTree as ET
 import constantcontact as cc
 import gmail
-from credentials import app_key, user_key, corp_id, report_id
+from credentials import app_key, user_key, corp_id, report_id, email
 from credentials import general_list_id, members_list_id
 from time import sleep
 
