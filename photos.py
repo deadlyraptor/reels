@@ -46,6 +46,7 @@ while True:
             final_name = '{} {}{}'.format(new_name, number, photo[-4:])
             os.rename(os.path.join(path, photo), os.path.join(path,
                                                               final_name))
+        break
     except FileNotFoundError:
         print('The path has a problem. Make sure you have the right location.')
         break
