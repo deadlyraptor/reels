@@ -2,7 +2,7 @@ import sys
 import requests
 import xml.etree.ElementTree as ET
 import constantcontact as cc
-import gmail
+import google
 from credentials import app_key, user_key, corp_id, report_id, email
 from credentials import general_list_id, members_list_id
 from time import sleep
@@ -22,12 +22,12 @@ root = ET.fromstring(r.text[3:])
 record_count = int(root[0].attrib['Record_Count'])
 
 if record_count == 0:
-    gmail.create_message(email, email,
-                         'New Constant Contact Actvitiy: No new contacts to \
-                          add.',
-                         ('There were no membership sales yesterday.\n\n'
-                          '---\n'
-                          'Sent by reels. Something wrong? Contact Javier.'))
+    google.create_message(email, email,
+                          'New Constant Contact Actvitiy: No new contacts to \
+                           add.',
+                          ('There were no membership sales yesterday.\n\n'
+                           '---\n'
+                           'Sent by reels. Something wrong? Contact Javier.'))
     sys.exit()
 
 # The child elements that deal with actual member data.

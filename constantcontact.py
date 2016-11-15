@@ -1,5 +1,5 @@
 import requests
-import gmail
+import google
 from credentials import cc_client_id, cc_token, email
 from time import sleep
 
@@ -76,14 +76,14 @@ def poll_activity(report):
         sleep(5)
     else:
         if report['error_count'] == 0:
-            gmail.create_message(email, email,
+            google.create_message(email, email,
                                  'New Constant Contact Activity: {} contact(s) added with \
                                  no errors.'.format(report['contact_count']),
                                  ('Added {} contact(s) added.\n\n'
                                   '---\n'
                                   'Sent by reels. Something wrong? Contact Javier.'.format(report['contact_count'])))
         else:
-            gmail.create_message(email, email,
+            google.create_message(email, email,
                                  'New Constant Contact Activity: {} contact(s) added with \
                                  {} error(s).'.format(report['contact_count'],
                                                       report['error_count']),
