@@ -34,7 +34,7 @@ The customer data collected includes:
 
 * **constantcontact** - Handles all Constant Contact API calls as well as any work needed to prepare data for upload.
 
-* **gmail** - Handles all Gmail API calls, including user authorization, creating messages, and sending messages.
+* **google** - Handles all Google authentication as well as Gmail API calls such as creating and sending messages.
 
 ## Setup
 
