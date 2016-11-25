@@ -23,7 +23,7 @@ record_count = int(root[0].attrib['Record_Count'])
 
 if record_count == 0:
     google.create_message(email, email,
-                          'New Constant Contact Actvitiy: No new contacts to \
+                          'New Constant Contact Actvitiy: No new members to \
                            add.',
                           ('There were no membership sales yesterday.\n\n'
                            '---\n'
@@ -32,7 +32,11 @@ if record_count == 0:
 
 # The child elements that deal with actual member data.
 collection = root[1][3]
+# The list of contacts passed to the Constant Contact functions.
 members = []
+# A helper list used to ensure only unique contacts. Constant Contact determins
+# if a contact is unique by the email address.
+emails = []
 
 
 def append_members(collection):
@@ -70,7 +74,8 @@ for count in range(record_count):
     # In order to add unique contacts and not overwrite ones already added,
     # check that the entry has an email and it is not the same as the previous.
     if (collection[count][7].text and
-        collection[count][7].text != collection[count - 1][7].text):
+       collection[count][7].text not in emails):
+        emails.append(collection[count][7].text)
         append_members(collection[count])
 
 payload = cc.create_payload(members, [general_list_id, members_list_id])
