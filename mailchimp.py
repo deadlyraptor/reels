@@ -94,7 +94,7 @@ def add_note(email):
 base_url = 'https://prod3.agileticketing.net/api/reporting.svc/xml/render'
 
 params = {'appkey': app_key, 'userkey': user_key, 'corporgid': corp_id,
-          'reportid': report_id, 'DatePicker': 'thisweek',
+          'reportid': report_id, 'DatePicker': 'yesterday',
           'MembershipMultiPicker': '130', 'filename': 'memberactivity.xml'}
 
 r = requests.get(base_url, params)
