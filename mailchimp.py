@@ -3,7 +3,7 @@ import requests
 import hashlib
 import xml.etree.ElementTree as ET
 import google
-from credentials import chimp_key, chimp_list_id
+from credentials import chimp_key, chimp_list_id, member_group
 from credentials import app_key, user_key, corp_id, report_id, info
 
 '''
@@ -138,6 +138,9 @@ def generate_payload(collection):
         'zip': 'zip code',
         'country': 'USA'
         }
+    'interests': {
+        'member_group': True
+    }
     }
 
     Arguments:
@@ -172,7 +175,9 @@ def generate_payload(collection):
                         'state': collection[12].text,
                         'zip': collection[13].text,
                         'country': 'USA'
-                        }
+                        }},
+               'interests': {
+                    '{0}'.format(member_group): True
                     }}
     return payload
 
