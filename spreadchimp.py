@@ -35,8 +35,13 @@ def create_workbook():
     Returns:
         book = The workbook that was opened.
     '''
+    headers = ['First Name', 'Last Name', 'Email', 'Phone', 'Full address']
     book = xlwt.Workbook()
     sheet = book.add_sheet('Contacts')
+    column_number = 0
+    for header in headers:
+        sheet.write(0, column_number, header)
+        column_number += 1
     return book
 
 
@@ -50,7 +55,7 @@ def save_workbook(book, film):
     Returns:
         none
     '''
-    book.save('{0} contacts'.format(film))
+    book.save('{0} contacts.xls'.format(film))
 
 
 for film in films:
