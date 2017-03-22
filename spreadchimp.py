@@ -29,8 +29,8 @@ def create_workbook():
         sheet = The sheet created.
         book = The workbook was created.
     '''
-    headers = ['Email', 'First Name', 'Last Name', 'Phone', 'Address 1',
-               'Address 2', 'City', 'State', 'Zip']
+    headers = ['Email', 'First Name', 'Last Name', 'Phone', 'Full Address']
+
     book = xlwt.Workbook()
     sheet = book.add_sheet('Contacts')
     column_number = 0
@@ -79,15 +79,17 @@ def prep_contacts(film):
         if not opt_in:
             continue
         elif opt_in and film_title == film:
+            address = '{0}  {1}  {2}  {3}  {4}'.format(
+                                                row_values[11],  # address 1
+                                                row_values[12],  # address 2
+                                                row_values[13].title(),  # city
+                                                row_values[14],  # state
+                                                row_values[15])  # zip
             contact = [row_values[3],  # email
                        row_values[2].title(),  # first name
                        row_values[1].title(),  # last name
                        row_values[16].replace('No Primary Phone', ''),  # phone
-                       row_values[11],  # addrss 1
-                       row_values[12],  # address 2
-                       row_values[13].title(),  # city
-                       row_values[14],   # state
-                       row_values[15]]  # zip
+                       address]  # full address
             contacts.append(contact)
     return contacts
 
