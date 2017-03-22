@@ -10,13 +10,6 @@ for dirpath, dirnames, filenames in os.walk(directory):
     for files in filenames:
         workbook = (dirpath + files)
 
-'''
-Test films include:
-Repulsion
-The Crying Game
-Saint Joan
-My LIfe as a Zucchini
-'''
 # Collects the names of all the films for which individual workbooks need to be
 # created.
 films = []
@@ -43,7 +36,7 @@ def create_workbook():
     for header in headers:
         sheet.write(0, column_number, header)
         column_number += 1
-    return book
+    return sheet, book
 
 
 def save_workbook(book, film):
@@ -66,7 +59,7 @@ total_rows = sh.nrows
 first_row = 6  # skips the first six rows as they are irrelevant.
 
 
-def prep_contacts():
+def prep_contacts(film):
     contacts = []
     for row in range(first_row, total_rows):
         contact = []
@@ -75,7 +68,7 @@ def prep_contacts():
         film_title = row_values[20]
         if not opt_in:
             continue
-        elif opt_in and film_title in films:
+        elif opt_in and film_title == film:
             contact = [row_values[3],  # email
                        row_values[2].title(),  # first name
                        row_values[1].title(),  # last name
@@ -89,6 +82,14 @@ def prep_contacts():
     return contacts
 
 
+def write_contacts(sheet, contacts):
+    for row, contact in enumerate(contacts, start=1):
+        for col, data in enumerate(contact):
+            sheet.write(row, col, data)
+
+
 for film in films:
-    save_workbook(create_workbook(), film)
-    prep_contacts()
+    sheet, book = create_workbook()
+    contacts = prep_contacts(film)
+    write_contacts(sheet, contacts)
+    save_workbook(book, film)
