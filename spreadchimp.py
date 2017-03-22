@@ -15,7 +15,7 @@ for dirpath, dirnames, filenames in os.walk(directory):
 films = []
 wbs = int(input('Number of workbooks to create: '))
 for wb in range(0, wbs):
-    film = input('Name the film: ')
+    film = input('Name film #{}: '.format(wb + 1))
     films.append(film)
 
 
@@ -26,7 +26,8 @@ def create_workbook():
         none
 
     Returns:
-        book = The workbook that was opened.
+        sheet = The sheet created.
+        book = The workbook was created.
     '''
     headers = ['Email', 'First Name', 'Last Name', 'Phone', 'Address 1',
                'Address 2', 'City', 'State', 'Zip']
@@ -60,6 +61,15 @@ first_row = 6  # skips the first six rows as they are irrelevant.
 
 
 def prep_contacts(film):
+    '''Collects all contacts that match the given film into a list that will be
+    used to write to the actual spreadsheet.
+
+    Arguments:
+        film = The film that contacts purchased tickets for.
+
+    Returns:
+        contacts = The list of all contacts for a given film.
+    '''
     contacts = []
     for row in range(first_row, total_rows):
         contact = []
