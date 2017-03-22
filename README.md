@@ -11,9 +11,14 @@ It consists of the following:
 
 * **cc_spreadsheet** - Copies the relevant customer contact information from a spreadsheet and writes it to two new spreadsheets depending on which film a customer purchased tickets for. All spreadsheets must be in .xls format.
 
+* **spreadchimp** - Same as above, except the spreadsheets are formatted for the way
+MailChimp handles subscriber information. This creates a spreadsheet for every film desired.
+
 * **cc_upload** - Same as above except instead of writing to a spreadsheet, it adds the contacts directly to Constant Contact using its API.
 
 * **member** - Parses an XML file with sales information for memberships sold on a given date by making a request to the Agile reporting API and adding the contacts directly to Constant Contact via its API.
+
+* **mailchimp** - Same as above except tweaked to use the MailChimp API.
 
 * **photos** - Renames all of the photo files of extensions .jpg, .jpeg, and .png to a new name input by the user but appended with a number, e.g., file name 1, file name 2, etc.
 
