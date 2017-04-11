@@ -10,14 +10,6 @@ for dirpath, dirnames, filenames in os.walk(directory):
     for files in filenames:
         workbook = (dirpath + files)
 
-# Collects the names of all the films for which individual workbooks need to be
-# created.
-films = []
-wbs = int(input('Number of workbooks to create: '))
-for wb in range(0, wbs):
-    film = input('Name film #{}: '.format(wb + 1))
-    films.append(film)
-
 
 def create_workbook():
     '''Creates a workbook.
@@ -59,6 +51,17 @@ sh = wb.sheet_by_index(0)
 total_rows = sh.nrows
 first_row = 6  # skips the first six rows as they are irrelevant.
 
+# Collects the names of all the films for which individual workbooks need to be
+# created.
+films = []
+for row in range(first_row, total_rows):
+    row_values = sh.row_values(row)
+    film_title = row_values[20]
+    if film_title in films:
+        pass
+    else:
+        films.append(film_title)
+
 
 def prep_contacts(film):
     '''Collects all contacts that match the given film into a list that will be
@@ -71,6 +74,7 @@ def prep_contacts(film):
         contacts = The list of all contacts for a given film.
     '''
     contacts = []
+    films = []
     for row in range(first_row, total_rows):
         contact = []
         row_values = sh.row_values(row)
