@@ -1,6 +1,6 @@
 import os
 import xlrd
-import xlwt
+import csv
 
 # Assumes the directory with the workbook is relative to the script's location.
 directory = 'workbooks/'
@@ -9,41 +9,6 @@ workbook = ''
 for dirpath, dirnames, filenames in os.walk(directory):
     for files in filenames:
         workbook = (dirpath + files)
-
-
-def create_workbook():
-    '''Creates a workbook.
-
-    Arguments:
-        none
-
-    Returns:
-        sheet = The sheet created.
-        book = The workbook was created.
-    '''
-    headers = ['Email', 'First Name', 'Last Name', 'Phone', 'Full Address']
-
-    book = xlwt.Workbook()
-    sheet = book.add_sheet('Contacts')
-    column_number = 0
-    for header in headers:
-        sheet.write(0, column_number, header)
-        column_number += 1
-    return sheet, book
-
-
-def save_workbook(book, film):
-    '''Saves the workbook created in create_workbook().
-
-    Arguments:
-        book = The object returned by calling create_workbook().
-        film = The name of the film that will part of the workbook's name.
-
-    Returns:
-        none
-    '''
-    book.save('{0} contacts.xls'.format(film))
-
 
 # Preps the workbook that contains the information desired.
 wb = xlrd.open_workbook(workbook)
@@ -74,7 +39,6 @@ def prep_contacts(film):
         contacts = The list of all contacts for a given film.
     '''
     contacts = []
-    films = []
     for row in range(first_row, total_rows):
         contact = []
         row_values = sh.row_values(row)
@@ -98,14 +62,12 @@ def prep_contacts(film):
     return contacts
 
 
-def write_contacts(sheet, contacts):
-    for row, contact in enumerate(contacts, start=1):
-        for col, data in enumerate(contact):
-            sheet.write(row, col, data)
-
-
+headers = ['Email', 'First Name', 'Last Name', 'Phone', 'Full Address']
 for film in films:
-    sheet, book = create_workbook()
     contacts = prep_contacts(film)
-    write_contacts(sheet, contacts)
-    save_workbook(book, film)
+    with open('{}.csv'.format(film), mode='w') as outfile:
+        writer = csv.writer(outfile, delimiter=',', quotechar='"',
+                            quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(headers)
+        for contact in contacts:
+            writer.writerow(contact)
