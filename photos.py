@@ -1,14 +1,11 @@
 import os
 from datetime import date
+from credentials import dropbox_path
 
 # Programs at the Coral Gables Art Cinema.
 programs = ['1. Main Features', '2. After Hours', '3. Special Screenings',
             '4. Family Day on Aragon', '5. National Theatre Live',
             '6. See It in 70mm', '7. Alternative Content']
-
-# These variables will make-up the full path, which takes the form:
-# M:/Coral Gables Art Cinema/Programming/PROGRAM/YEAR/TITLE/LOCATION OF PHOTOS
-root = 'M:/Coral Gables Art Cinema/Programming/'
 
 # Ensure users can understand how the script works without it breaking and
 # raising errors they will not understand.
@@ -31,7 +28,7 @@ photo_dir = input('Location of the photos: ')
 new_name = input('Enter new base file name: ')
 
 # The full path to the files, using the variables above.
-path = os.path.join(root, program, year, title, photo_dir)
+path = os.path.join(dropbox_path, program, year, title, photo_dir)
 
 while True:
     try:

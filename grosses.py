@@ -1,5 +1,4 @@
 import os
-import sys
 import xlrd
 
 directory = 'workbooks/'
@@ -43,7 +42,4 @@ for key, value in films.items():
 print(f'Total attendance: {sum(admissions)}')
 print(f'Total gross: {sum(grosses)} \n')
 
-# keeps terminal window open when script is run on Windows by clicking .py file
-exit = input('Type "exit" to close the console: ')
-if exit == 'exit':
-    sys.exit()
+input('Press enter to exit: ')  # keeps window open
