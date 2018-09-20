@@ -1,14 +1,12 @@
 import os
-import xlrd
 import csv
+import xlrd
 
 # Assumes the directory with the workbook is relative to the script's location.
 directory = 'workbooks/'
+file = os.listdir(directory)[0]
 
-workbook = ''
-for dirpath, dirnames, filenames in os.walk(directory):
-    for files in filenames:
-        workbook = (dirpath + files)
+workbook = (f'{directory}/{file}')
 
 # Preps the workbook that contains the information desired.
 wb = xlrd.open_workbook(workbook)

@@ -2,9 +2,9 @@ import os
 import xlrd
 
 directory = 'workbooks/'
-for dirpath, dirnames, filenames in os.walk(directory):
-    for files in filenames:
-        workbook = (dirpath + files)
+file = os.listdir(directory)[0]
+
+workbook = (f'{directory}/{file}')
 
 wb = xlrd.open_workbook(workbook)
 sheets = wb.sheets()
@@ -25,7 +25,7 @@ for index, sheet in enumerate(sheets):
                 ])
     films[film] = figures
     # easier to sum total admissions & grosses with a list
-    # rather than looping through the film films dict
+    # rather than looping through the films dict
     admissions.append(admission)
     grosses.append(gross)
 
