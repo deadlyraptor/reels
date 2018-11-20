@@ -1,49 +1,22 @@
 import os
-from datetime import date
-from credentials import dropbox_path
+import sys
+import tkinter as tk
+from tkinter import filedialog
 
-# Programs at the Coral Gables Art Cinema.
-programs = ['1. Main Features', '2. After Hours', '3. Special Screenings',
-            '4. Family Day on Aragon', '5. National Theatre Live',
-            '6. See It in 70mm', '7. Alternative Content']
+# tkinter is only used for directory prompt
+root = tk.Tk()
+root.withdraw()  # hides default window
+directory = filedialog.askdirectory()
 
-# Ensure users can understand how the script works without it breaking and
-# raising errors they will not understand.
-while True:
-    try:
-        for program in programs:
-            print(program)
-        index = int(input('Select a program by its number: '))
-        program = programs[index - 1][3:]
-        break
-    except ValueError:
-        print('That didn\'t work! Type one of the numbers next to a program.')
-    except IndexError:
-        print('We only have {} programs! Try again.'.format(len(programs)))
+# if user does not select a directory, exit the script
+if not directory:
+    sys.exit()
 
-year = str(date.today().year)
-title = input('Select a film: ')
-photo_dir = input('Location of the photos: ')
+base_name = input('Enter the new base filename: ')
 
-new_name = input('Enter new base file name: ')
-
-# The full path to the files, using the variables above.
-path = os.path.join(dropbox_path, program, year, title, photo_dir)
-
-while True:
-    try:
-        # Collect all the .jpg or .png files in the directory.
-        photos = []
-        for file in os.listdir(path):
-            if file[-4:] in ('.jpg', '.jpeg', '.png'):
-                photos.append(file)
-
-        # Rename all of the photos collected above and keep the same file type.
-        for number, photo in enumerate(photos, start=1):
-            final_name = '{} {}{}'.format(new_name, number, photo[-4:])
-            os.rename(os.path.join(path, photo), os.path.join(path,
-                                                              final_name))
-        break
-    except FileNotFoundError:
-        print('The path has a problem. Make sure you have the right location.')
-        break
+# renames each photo in the selected directory
+with os.scandir(directory) as photo_directory:
+    for number, photo in enumerate(photo_directory, start=1):
+        if photo.name.endswith(('.jpg', '.jpeg', '.png')):
+            new_name = f'{base_name} {number}.{photo.name.split(".")[1]}'
+            os.rename(photo, os.path.join(directory, new_name))
