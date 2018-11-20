@@ -1,11 +1,10 @@
 import os
-import sys
 import xlrd
 
 directory = 'workbooks/'
-for dirpath, dirnames, filenames in os.walk(directory):
-    for files in filenames:
-        workbook = (dirpath + files)
+file = os.listdir(directory)[0]
+
+workbook = (f'{directory}/{file}')
 
 wb = xlrd.open_workbook(workbook)
 sheets = wb.sheets()
@@ -26,7 +25,7 @@ for index, sheet in enumerate(sheets):
                 ])
     films[film] = figures
     # easier to sum total admissions & grosses with a list
-    # rather than looping through the film films dict
+    # rather than looping through the films dict
     admissions.append(admission)
     grosses.append(gross)
 
@@ -43,7 +42,4 @@ for key, value in films.items():
 print(f'Total attendance: {sum(admissions)}')
 print(f'Total gross: {sum(grosses)} \n')
 
-# keeps terminal window open when script is run on Windows by clicking .py file
-exit = input('Type "exit" to close the console: ')
-if exit == 'exit':
-    sys.exit()
+input('Press enter to exit: ')  # keeps window open
