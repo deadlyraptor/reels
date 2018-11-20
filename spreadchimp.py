@@ -63,7 +63,7 @@ def prep_contacts(film):
 headers = ['Email', 'First Name', 'Last Name', 'Phone', 'Full Address']
 for film in films:
     contacts = prep_contacts(film)
-    with open('{}.csv'.format(film), mode='w') as outfile:
+    with open(f'{film}.csv', mode='w') as outfile:
         writer = csv.writer(outfile, delimiter=',', quotechar='"',
                             quoting=csv.QUOTE_MINIMAL)
         writer.writerow(headers)
